@@ -1,0 +1,34 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
+    <HasSharedItems>true</HasSharedItems>
+    <SharedGUID>5cc5098e-6664-4ca0-af02-4287a3109864</SharedGUID>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration">
+    <Import_RootNamespace>Orc.DependencyGraph</Import_RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)..\..\SolutionAssemblyInfo.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)..\..\GlobalSuppressions.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)..\..\MethodTimeLogger.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)GraphB\GraphB.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)GraphD\Graph.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)GraphD\GraphFast.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)GraphD\Interfaces\IInternalGraph.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)GraphD\Interfaces\IInternalNode.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)GraphD\InternalNode.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)GraphD\InternalNodeFast.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)GraphGenerator.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Interfaces\IGraph.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Interfaces\INode.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ModuleInitializer.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)OrderedEnumerable.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Properties\AssemblyInfo.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)TopologicalSortException.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="$(MSBuildThisFileDirectory)GraphD\Interfaces\" />
+    <Folder Include="$(MSBuildThisFileDirectory)Interfaces\" />
+  </ItemGroup>
+</Project>
