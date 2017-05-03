@@ -18,6 +18,7 @@ namespace Orc.DependencyGraph.ViewModels
     {
         public MainViewModel()
         {
+            Title = "Orc.DependencyGraph example";
         }
 
         #region Properties
