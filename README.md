@@ -3,7 +3,7 @@
 [![Join the chat at https://gitter.im/WildGums/Orc.DependencyGraph](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/WildGums/Orc.DependencyGraph?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 ![License](https://img.shields.io/github/license/WildGums/Orc.DependencyGraph.svg)
-![Version](https://img.shields.io/nuget/v/[NUGET.PACKAGENAME].svg)
+![Version](https://img.shields.io/nuget/v/Orc.DependencyGraph.svg)
 ![Pre-release version](https://img.shields.io/nuget/vpre/Orc.DependencyGraph.svg)
 
 ## Introduction
@@ -117,7 +117,7 @@ Critical path method O(V+E)
 
 ![Dependency Graph](./img/DependencyGraph.png)
 
-#####NOTE:
+##### NOTE:
 - The root nodes are 11 and 12.
 - The leaf nodes are 61 and 62
 - This graph has 6 levels.
