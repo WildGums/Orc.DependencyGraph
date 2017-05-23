@@ -115,7 +115,7 @@ Critical path method O(V+E)
 
 ## Example
 
-![Dependency Graph](img/DependencyGraph.png)
+![Dependency Graph](/img/DependencyGraph.png)
 
 ##### NOTE:
 - The root nodes are 11 and 12.
