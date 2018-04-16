@@ -1,8 +1,9 @@
 // --------------------------------------------------------------------------------------------------------------------
-// <copyright file="MethodTimeLogger.cs" company="WildGums">
-//   Copyright (c) 2008 - 2017 WildGums. All rights reserved.
+// <copyright file="ModuleInitializer.cs" company="WildGums">
+//   Copyright (c) 2008 - 2018 WildGums. All rights reserved.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
+
 
 using System.Reflection;
 using Catel.Logging;
@@ -18,7 +19,7 @@ internal static class MethodTimeLogger
     {
         Log(methodBase.DeclaringType, methodBase.Name, milliseconds, message);
     }
-    
+
     public static void Log(Type type, string methodName, long milliseconds, string message)
     {
         if (type == null)
