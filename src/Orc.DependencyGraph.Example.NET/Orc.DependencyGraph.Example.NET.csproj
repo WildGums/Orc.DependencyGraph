@@ -4,6 +4,7 @@
     <AssemblyName>Orc.DependencyGraph.Example.NET</AssemblyName>
     <RootNamespace>Orc.DependencyGraph.Example</RootNamespace>
     <DefaultLanguage>en-US</DefaultLanguage>
+    <SonarQubeExclude>true</SonarQubeExclude>
   </PropertyGroup>
 
   <PropertyGroup>
