@@ -1,6 +1,6 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.26403.7
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30011.22
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "misc", "misc", "{1FE0D431-A761-4239-B2D6-D32C70723FD2}"
 	ProjectSection(SolutionItems) = preProject
@@ -25,27 +25,22 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{D3EA1078
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Example", "Example", "{672BFA2E-9F93-496F-B188-40579FB5D301}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Orc.DependencyGraph", "Orc.DependencyGraph\Orc.DependencyGraph.csproj", "{245C09B9-119D-4C47-8019-AE3966A99174}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Orc.DependencyGraph", "Orc.DependencyGraph\Orc.DependencyGraph.csproj", "{4D453CC5-BF49-4AF1-BC25-99FFF818AF79}"
 EndProject
-Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Orc.DependencyGraph.Example.Shared", "Orc.DependencyGraph.Example.Shared\Orc.DependencyGraph.Example.Shared.shproj", "{05FA23F9-ACF9-447F-86D2-B0B2757B6371}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Orc.DependencyGraph.Example.NET", "Orc.DependencyGraph.Example.NET\Orc.DependencyGraph.Example.NET.csproj", "{E269B81F-D6E1-4A17-8C17-C050CAB80A50}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Orc.DependencyGraph.Example", "Orc.DependencyGraph.Example\Orc.DependencyGraph.Example.csproj", "{E269B81F-D6E1-4A17-8C17-C050CAB80A50}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Orc.DependencyGraph.Tests", "Orc.DependencyGraph.Tests\Orc.DependencyGraph.Tests.csproj", "{E05B76F9-1990-4806-A2E6-AB21BC9189F3}"
 EndProject
 Global
-	GlobalSection(SharedMSBuildProjectFiles) = preSolution
-		Orc.DependencyGraph.Example.Shared\Orc.DependencyGraph.Example.Shared.projitems*{05fa23f9-acf9-447f-86d2-b0b2757b6371}*SharedItemsImports = 13
-	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{245C09B9-119D-4C47-8019-AE3966A99174}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{245C09B9-119D-4C47-8019-AE3966A99174}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{245C09B9-119D-4C47-8019-AE3966A99174}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{245C09B9-119D-4C47-8019-AE3966A99174}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4D453CC5-BF49-4AF1-BC25-99FFF818AF79}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4D453CC5-BF49-4AF1-BC25-99FFF818AF79}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4D453CC5-BF49-4AF1-BC25-99FFF818AF79}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4D453CC5-BF49-4AF1-BC25-99FFF818AF79}.Release|Any CPU.Build.0 = Release|Any CPU
 		{E269B81F-D6E1-4A17-8C17-C050CAB80A50}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{E269B81F-D6E1-4A17-8C17-C050CAB80A50}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E269B81F-D6E1-4A17-8C17-C050CAB80A50}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -62,8 +57,7 @@ Global
 		{0787DFC6-AB24-4D00-A8A4-FF203DC7D080} = {A8A1A4EE-E04A-43AB-90C9-41E7B82EE1E5}
 		{D3EA1078-BF3D-4709-871C-AAFF70B95045} = {A8A1A4EE-E04A-43AB-90C9-41E7B82EE1E5}
 		{672BFA2E-9F93-496F-B188-40579FB5D301} = {A8A1A4EE-E04A-43AB-90C9-41E7B82EE1E5}
-		{245C09B9-119D-4C47-8019-AE3966A99174} = {0787DFC6-AB24-4D00-A8A4-FF203DC7D080}
-		{05FA23F9-ACF9-447F-86D2-B0B2757B6371} = {672BFA2E-9F93-496F-B188-40579FB5D301}
+		{4D453CC5-BF49-4AF1-BC25-99FFF818AF79} = {0787DFC6-AB24-4D00-A8A4-FF203DC7D080}
 		{E269B81F-D6E1-4A17-8C17-C050CAB80A50} = {672BFA2E-9F93-496F-B188-40579FB5D301}
 		{E05B76F9-1990-4806-A2E6-AB21BC9189F3} = {D3EA1078-BF3D-4709-871C-AAFF70B95045}
 	EndGlobalSection
