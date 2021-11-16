@@ -41,7 +41,7 @@ namespace Orc.DependencyGraph
             {
                 var parent = DequeueFreeParent(parentQueue, descendants);
                 var nextChildNode = DequeueFreeChild(childrenQueue, parent, precedents);
-                if (nextChildNode == null)
+                if (nextChildNode is null)
                 {
                     nextChildNode = GetOrCreateNode(nodes, nodes.Count);
                     EnqueueParent(parentQueue, nextChildNode);
@@ -82,7 +82,7 @@ namespace Orc.DependencyGraph
         private static QueueElement DequeueFreeChild(LinkedList<QueueElement> childrenQueue, QueueElement parentNode, int precedents)
         {
             var freeChild = childrenQueue.FirstOrDefault(childNode => parentNode.Edges.Count(_ => _ == childNode.Node) <= 0);
-            if (freeChild == null)
+            if (freeChild is null)
             {
                 return null;
             }
