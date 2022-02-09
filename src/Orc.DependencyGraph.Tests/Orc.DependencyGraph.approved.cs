@@ -98,8 +98,8 @@ namespace Orc.DependencyGraph.GraphD
     public interface IInternalGraph<T> : Orc.DependencyGraph.IGraph<T>
         where T : System.IEquatable<T>
     {
-        System.Collections.Generic.IEnumerable<Orc.DependencyGraph.GraphD.IInternalNode<>[]> BackEdges { get; }
-        System.Collections.Generic.IEnumerable<Orc.DependencyGraph.GraphD.IInternalNode<>[]> Edges { get; }
+        System.Collections.Generic.IEnumerable<Orc.DependencyGraph.GraphD.IInternalNode<T>[]> BackEdges { get; }
+        System.Collections.Generic.IEnumerable<Orc.DependencyGraph.GraphD.IInternalNode<T>[]> Edges { get; }
         Orc.DependencyGraph.GraphD.IInternalNode<T> GetOrCreateNode(T publicNode);
         void ToFile(string filePath);
     }
