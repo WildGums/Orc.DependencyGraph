@@ -1,7 +1,7 @@
 ﻿[assembly: System.Resources.NeutralResourcesLanguage("en-US")]
 [assembly: System.Runtime.CompilerServices.InternalsVisibleTo("Orc.DependencyGraph.PerformanceTest")]
 [assembly: System.Runtime.CompilerServices.InternalsVisibleTo("Orc.DependencyGraph.Tests")]
-[assembly: System.Runtime.Versioning.TargetFramework(".NETCoreApp,Version=v5.0", FrameworkDisplayName="")]
+[assembly: System.Runtime.Versioning.TargetFramework(".NETCoreApp,Version=v6.0", FrameworkDisplayName="")]
 public static class ModuleInitializer
 {
     public static void Initialize() { }
@@ -98,8 +98,8 @@ namespace Orc.DependencyGraph.GraphD
     public interface IInternalGraph<T> : Orc.DependencyGraph.IGraph<T>
         where T : System.IEquatable<T>
     {
-        System.Collections.Generic.IEnumerable<Orc.DependencyGraph.GraphD.IInternalNode<>[]> BackEdges { get; }
-        System.Collections.Generic.IEnumerable<Orc.DependencyGraph.GraphD.IInternalNode<>[]> Edges { get; }
+        System.Collections.Generic.IEnumerable<Orc.DependencyGraph.GraphD.IInternalNode<T>[]> BackEdges { get; }
+        System.Collections.Generic.IEnumerable<Orc.DependencyGraph.GraphD.IInternalNode<T>[]> Edges { get; }
         Orc.DependencyGraph.GraphD.IInternalNode<T> GetOrCreateNode(T publicNode);
         void ToFile(string filePath);
     }

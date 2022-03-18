@@ -1,4 +1,4 @@
-// --------------------------------------------------------------------------------------------------------------------
+﻿// --------------------------------------------------------------------------------------------------------------------
 // <copyright file="GraphB.cs" company="WildGums">
 //   Copyright (c) 2008 - 2017 WildGums. All rights reserved.
 // </copyright>
@@ -166,7 +166,7 @@ namespace Orc.DependencyGraph.GraphB
         {
             base.Sort();
 
-            if (nodesSort == null)
+            if (nodesSort is null)
             {
                 //  return null;
                 throw new TopologicalSortException("Topological sort failed due to loops in the graph");
