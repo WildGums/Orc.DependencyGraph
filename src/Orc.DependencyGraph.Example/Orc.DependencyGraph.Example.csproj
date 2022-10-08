@@ -15,7 +15,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Catel.MVVM" Version="5.12.22" />
+    <PackageReference Include="Catel.MVVM" Version="6.0.0-alpha1007" />
     <PackageReference Include="Catel.Fody" Version="4.7.0" PrivateAssets="all" />
     <PackageReference Include="Fody" Version="6.6.4" PrivateAssets="all">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
@@ -25,10 +25,6 @@
     <PackageReference Include="Orc.Controls" Version="4.8.0" />
     <PackageReference Include="Orchestra.Core" Version="6.8.1" />
     <PackageReference Include="System.Security.Permissions" Version="6.0.0" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <PackageReference Update="NETStandard.Library" Version="2.0.3" />
   </ItemGroup>
 
   <ItemGroup>
