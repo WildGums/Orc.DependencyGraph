@@ -200,8 +200,7 @@
         #region Methods
         private InternalNodeFast<T> GetOrCreateNode(T publicNode)
         {
-            InternalNodeFast<T> node;
-            if (!_nodes.TryGetValue(publicNode, out node))
+            if (!_nodes.TryGetValue(publicNode, out var node))
             {
                 node = new InternalNodeFast<T>(publicNode, this);
                 _nodes.Add(publicNode, node);
@@ -234,7 +233,7 @@
 
             // find the deepest node
             var orderedNodes = Sort();
-            var deepestNode = new InternalNodeFast<T>(default(T), null) {ReferenceRelativeLevel = int.MinValue};
+            var deepestNode = new InternalNodeFast<T>(default, null) {ReferenceRelativeLevel = int.MinValue};
             foreach (InternalNodeFast<T> node in orderedNodes)
             {
                 node.ReferenceRelativeLevel = GetMaxLevel(node.Parents) + 1;
@@ -248,7 +247,7 @@
             ReferencePoint = 0;
 
             // go up and compute levels of parent nodes.
-            int minLevel = VisitRelations(referenceNode);
+            var minLevel = VisitRelations(referenceNode);
             ReferencePoint = minLevel * (-1);
             _countLevels = deepestNode.Level + 1;
             _isDirty = false;
@@ -265,7 +264,7 @@
 
         private int VisitRelations(InternalNodeFast<T> startNode)
         {
-            int minLevel = int.MaxValue;
+            var minLevel = int.MaxValue;
             var stack = new Stack<InternalNodeFast<T>>();
             var visitedNodes = new bool[_nodes.Count];
             stack.Push(startNode);

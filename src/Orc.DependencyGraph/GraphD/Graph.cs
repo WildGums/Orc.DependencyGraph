@@ -212,8 +212,7 @@
         #region Methods
         private InternalNode<T> GetOrCreateNode(T publicNode)
         {
-            InternalNode<T> node;
-            if (!_nodes.TryGetValue(publicNode, out node))
+            if (!_nodes.TryGetValue(publicNode, out var node))
             {
                 node = new InternalNode<T>(publicNode, this);
                 _nodes.Add(publicNode, node);
@@ -227,12 +226,12 @@
             var src = (InternalNode<T>)source;
             var dst = (InternalNode<T>)destination;
 
-            if (src.Edges.Count(_ => _ == dst) == 0)
+            if (!src.Edges.Any(edge => edge == dst))
             {
                 src.Edges.Add(dst);
             }
 
-            if (dst.Parents.Count(_ => _ == src) == 0)
+            if (!dst.Parents.Any(edge => edge == src))
             {
                 dst.Parents.Add(src); // try to move inside the previous if
             }
@@ -244,7 +243,7 @@
 
             // find the deepest node
             var orderedNodes = Sort();
-            var deepestNode = new InternalNode<T>(default(T), null) { ReferenceRelativeLevel = int.MinValue };
+            var deepestNode = new InternalNode<T>(default, null) { ReferenceRelativeLevel = int.MinValue };
             foreach (InternalNode<T> node in orderedNodes)
             {
                 node.ReferenceRelativeLevel = GetMaxLevel(node.Parents) + 1;
@@ -258,7 +257,7 @@
             ReferencePoint = 0;
 
             // go up and compute levels of parent nodes.
-            int minLevel = VisitRelations(referenceNode);
+            var minLevel = VisitRelations(referenceNode);
             ReferencePoint = minLevel * (-1);
             _countLevels = deepestNode.Level + 1;
             _isDirty = false;
@@ -266,7 +265,7 @@
 
         private int VisitRelations(InternalNode<T> startNode)
         {
-            int minLevel = int.MaxValue;
+            var minLevel = int.MaxValue;
             var visitedNodes = new HashSet<InternalNode<T>>();
             var stack = new Stack<InternalNode<T>>();
             stack.Push(startNode);
