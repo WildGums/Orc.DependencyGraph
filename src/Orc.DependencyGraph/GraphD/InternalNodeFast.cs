@@ -1,10 +1,3 @@
-// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="InternalNodeFast.cs" company="WildGums">
-//   Copyright (c) 2008 - 2017 WildGums. All rights reserved.
-// </copyright>
-// --------------------------------------------------------------------------------------------------------------------
-
-
 namespace Orc.DependencyGraph.GraphD
 {
     using System;

@@ -1,10 +1,3 @@
-// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="OrderedEnumerable.cs" company="WildGums">
-//   Copyright (c) 2008 - 2018 WildGums. All rights reserved.
-// </copyright>
-// --------------------------------------------------------------------------------------------------------------------
-
-
 namespace Orc.DependencyGraph
 {
     using System;

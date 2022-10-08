@@ -1,10 +1,4 @@
-﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="GraphTestHelper.cs" company="WildGums">
-//   Copyright (c) 2008 - 2017 WildGums. All rights reserved.
-// </copyright>
-// --------------------------------------------------------------------------------------------------------------------
-
-namespace Orc.DependencyGraph.Tests
+﻿namespace Orc.DependencyGraph.Tests
 {
     using System;
     using System.Collections.Generic;
