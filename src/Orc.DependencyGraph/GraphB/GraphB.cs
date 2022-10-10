@@ -167,9 +167,9 @@
 
             if (nodesSort.Count != _graphSort.Count)
             {
-#pragma warning disable CL0006 // Using "is" statement inside null comparison expression is recommended style
-                _graphSort = nodesSort.Select(Find).Where(node => node != null).ToList()!;
-#pragma warning restore CL0006 // Using "is" statement inside null comparison expression is recommended style
+                _graphSort = nodesSort.Select(Find)
+                    .Where(node => node is not null)
+                    .ToList()!;
             }
 
             return new OrderedEnumerable<INode<T>>(() => _graphSort);

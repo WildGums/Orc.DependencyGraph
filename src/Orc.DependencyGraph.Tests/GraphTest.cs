@@ -24,7 +24,7 @@
         [TestCase(11)]
         public void FindReturnsCorrectValue(int node)
         {
-            var graph = GraphTestHelper.CreateExampleGraph(TargetGraph)!;
+            var graph = GraphTestHelper.CreateExampleGraph(TargetGraph);
 
             Assert.IsNotNull(graph);
             Assert.AreEqual(node, graph.Find(node)?.Value);
@@ -38,7 +38,7 @@
         [TestCase(5, new[] { 61, 62 })]
         public void GetNodesReturnsNodesOnTheLevel(int level, int[] expectedNodes)
         {
-            var graph = GraphTestHelper.CreateExampleGraph(TargetGraph)!;
+            var graph = GraphTestHelper.CreateExampleGraph(TargetGraph);
 
             Assert.IsNotNull(graph);
 
@@ -49,7 +49,7 @@
         [TestCase(new[] { 11, 12 })]
         public void GetRootNodesReturnsNodesOnZeroLevel(int[] expectedNodes)
         {
-            var graph = GraphTestHelper.CreateExampleGraph(TargetGraph)!;
+            var graph = GraphTestHelper.CreateExampleGraph(TargetGraph);
 
             Assert.IsNotNull(graph);
 
@@ -59,7 +59,7 @@
         [TestCase(new[] { 61, 62 })]
         public void GetLeafNodesReturnsNodesOnLastLevel(int[] expectedNodes)
         {
-            var graph = GraphTestHelper.CreateExampleGraph(TargetGraph)!;
+            var graph = GraphTestHelper.CreateExampleGraph(TargetGraph);
 
             Assert.IsNotNull(graph);
 
@@ -72,7 +72,7 @@
         [TestCase(4, 5, new[] { 51, 61, 62 })]
         public void GetNodesWithBetweenReturnsNodesOnTheLevelsInTheRange(int levelFrom, int levelTo, int[] expectedNodes)
         {
-            var graph = GraphTestHelper.CreateExampleGraph(TargetGraph)!;
+            var graph = GraphTestHelper.CreateExampleGraph(TargetGraph);
 
             Assert.IsNotNull(graph);
 
@@ -279,7 +279,7 @@
         [Test]
         public void CountLevelsReturnsNumberOfLevelsInGraph1()
         {
-            var graph = GraphTestHelper.CreateExampleGraph(TargetGraph)!;
+            var graph = GraphTestHelper.CreateExampleGraph(TargetGraph);
 
             Assert.NotNull(graph);
 
@@ -289,7 +289,7 @@
         [Test]
         public void CountLevelsReturnsNumberOfLevelsInGraph2()
         {
-            var graph = GraphTestHelper.CreateEmptyGraph(TargetGraph)!;
+            var graph = GraphTestHelper.CreateEmptyGraph(TargetGraph);
 
             Assert.NotNull(graph);
 
@@ -305,7 +305,7 @@
         [Test]
         public void CountReturnsCountOfGraph()
         {
-            var graph = GraphTestHelper.CreateExampleGraph(TargetGraph)!;
+            var graph = GraphTestHelper.CreateExampleGraph(TargetGraph);
 
             Assert.NotNull(graph);
 
@@ -331,7 +331,7 @@
         [Test]
         public void SortReturnsNodesInTopologicalOrder()
         {
-            var graph = GraphTestHelper.CreateExampleGraph(TargetGraph)!;
+            var graph = GraphTestHelper.CreateExampleGraph(TargetGraph);
 
             Assert.NotNull(graph);
 
@@ -346,7 +346,7 @@
         {
             Assert.Throws<TopologicalSortException>(() =>
             {
-                var graph = GraphTestHelper.CreateExampleGraph(TargetGraph)!;
+                var graph = GraphTestHelper.CreateExampleGraph(TargetGraph);
 
                 Assert.NotNull(graph);
 

@@ -9,10 +9,10 @@
     internal static class GraphTestHelper
     {
         #region Methods
-        public static IGraph<int>? CreateExampleGraph(Type type)
+        public static IGraph<int> CreateExampleGraph(Type type)
         {
             var graph = CreateEmptyGraph(type);
-            graph?.AddSequences(new[]
+            graph.AddSequences(new[]
             {
             new[] {51, 61},
             new[] {51, 62},
@@ -49,7 +49,7 @@
             // this example contains difficult cases:
             // - children of node 31 are on different levels
             // - parents of node 51 are on different levels
-            var graph = CreateExampleGraph(type)!;
+            var graph = CreateExampleGraph(type);
 
             Assert.IsNotNull(graph);
 
@@ -62,7 +62,7 @@
 
         public static IGraph<int> CreateSimpleGraph(Type type)
         {
-            var graph = CreateEmptyGraph(type)!;
+            var graph = CreateEmptyGraph(type);
 
             Assert.IsNotNull(graph);
 
@@ -78,7 +78,7 @@
         {
             foreach (var sequence in sequences)
             {
-                for (int index = 0; index < sequence.Length - 1; index++)
+                for (var index = 0; index < sequence.Length - 1; index++)
                 {
                     var node = graph.Find(sequence[index]);
                     Assert.AreEqual(1, node?.ImmediateDescendants.Count(x => x.Value == sequence[index + 1]));
@@ -90,7 +90,7 @@
         {
             foreach (var sequence in sequences)
             {
-                for (int index = 0; index < sequence.Length - 1; index++)
+                for (var index = 0; index < sequence.Length - 1; index++)
                 {
                     var node = graph.Find(sequence[index]);
                     Assert.AreEqual(1, node?.ImmediatePrecedents.Count(x => x.Value == sequence[index + 1]));
@@ -143,9 +143,13 @@
             }
         }
 
-        public static IGraph<int>? CreateEmptyGraph(Type type)
+        public static IGraph<int> CreateEmptyGraph(Type type)
         {
-            return Activator.CreateInstance(type) as IGraph<int>;
+            var instance = Activator.CreateInstance(type) as IGraph<int>;
+
+            Assert.IsNotNull(instance);
+
+            return instance;
         }
         #endregion
     }
