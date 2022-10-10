@@ -26,7 +26,7 @@
         [TestCase(61, 5)]
         public void LevelCalculatesCorrectly(int node, int expectedLevel)
         {
-            var graph = GraphTestHelper.CreateExampleGraph(TargetGraph)!;
+            var graph = GraphTestHelper.CreateExampleGraph(TargetGraph);
 
             Assert.NotNull(graph);
             _ = graph.CountLevels; // force graph to rebuild. fix this later
