@@ -8,7 +8,6 @@
 
     internal static class GraphGenerator
     {
-        #region Methods
         public static IGraph<int> GenerateGraph(int levels, int descendants, int precedents)
         {
             var graph = new Graph<int>();
@@ -18,6 +17,8 @@
 
         public static void FillGraph(IGraph<int> graph, int levels, int descendants, int precedents)
         {
+            ArgumentNullException.ThrowIfNull(graph);
+
             var nodes = new Dictionary<int, QueueElement>();
             ValidateParameters(descendants, precedents);
 
@@ -49,11 +50,16 @@
 
         private static void EnqueueParent(Queue<QueueElement> parentQueue, QueueElement nextChildNode)
         {
+            ArgumentNullException.ThrowIfNull(parentQueue);
+            ArgumentNullException.ThrowIfNull(nextChildNode);
+
             parentQueue.Enqueue(nextChildNode);
         }
 
         private static QueueElement DequeueFreeParent(Queue<QueueElement> parentQueue, int descendants)
         {
+            ArgumentNullException.ThrowIfNull(parentQueue);
+
             var freeParent = parentQueue.Peek();
             if (++freeParent.DescendantCount == descendants)
             {
@@ -65,6 +71,9 @@
 
         private static void EnqueueChild(LinkedList<QueueElement> childrenQueue, QueueElement nextChildNode, int precedents)
         {
+            ArgumentNullException.ThrowIfNull(childrenQueue);
+            ArgumentNullException.ThrowIfNull(nextChildNode);
+
             if (precedents > 1)
             {
                 nextChildNode.PrecedentCount = 1;
@@ -74,6 +83,9 @@
 
         private static QueueElement? DequeueFreeChild(LinkedList<QueueElement> childrenQueue, QueueElement parentNode, int precedents)
         {
+            ArgumentNullException.ThrowIfNull(childrenQueue);
+            ArgumentNullException.ThrowIfNull(parentNode);
+
             var freeChild = childrenQueue.FirstOrDefault(childNode => !parentNode.Edges.Any(node => node == childNode.Node));
             if (freeChild is null)
             {
@@ -133,6 +145,8 @@
 
         private static QueueElement GetOrCreateNode(Dictionary<int, QueueElement> dictionary, int key)
         {
+            ArgumentNullException.ThrowIfNull(dictionary);
+
             if (dictionary.ContainsKey(key))
             {
                 return dictionary[key];
@@ -142,12 +156,9 @@
             dictionary.Add(key, node);
             return node;
         }
-        #endregion
 
-        #region Nested type: QueueElement
         private class QueueElement
         {
-            #region Constructors
             public QueueElement(int node, int descendantCount, int precedentCount)
             {
                 Edges = new List<int>();
@@ -155,15 +166,11 @@
                 DescendantCount = descendantCount;
                 PrecedentCount = precedentCount;
             }
-            #endregion
 
-            #region Properties
             public int Node { get; set; }
             public int DescendantCount { get; set; }
             public int PrecedentCount { get; set; }
             public IList<int> Edges { get; private set; }
-            #endregion
         }
-        #endregion
     }
 }

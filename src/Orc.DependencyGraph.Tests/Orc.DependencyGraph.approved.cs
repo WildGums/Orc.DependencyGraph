@@ -22,7 +22,7 @@ namespace Orc.DependencyGraph.GraphB
         public void AddSequence(System.Collections.Generic.IEnumerable<T> sequence) { }
         public void AddSequences(System.Collections.Generic.IEnumerable<System.Collections.Generic.IEnumerable<T>> sequences) { }
         public bool CanSort() { }
-        public Orc.DependencyGraph.INode<T> Find(T node) { }
+        public Orc.DependencyGraph.INode<T>? Find(T node) { }
         public System.Collections.Generic.IEnumerable<Orc.DependencyGraph.INode<T>> GetLeafNodes() { }
         public System.Linq.IOrderedEnumerable<Orc.DependencyGraph.INode<T>> GetNodes(int level) { }
         public System.Linq.IOrderedEnumerable<Orc.DependencyGraph.INode<T>> GetNodesBetween(int levelFrom, int levelTo) { }
@@ -39,9 +39,9 @@ namespace Orc.DependencyGraph.GraphB
             public System.Linq.IOrderedEnumerable<Orc.DependencyGraph.INode<N>> ImmediateDescendants { get; }
             public System.Linq.IOrderedEnumerable<Orc.DependencyGraph.INode<N>> ImmediatePrecedents { get; }
             public int Level { get; }
-            public Orc.DependencyGraph.INode<N> Next { get; }
+            public Orc.DependencyGraph.INode<N>? Next { get; }
             public System.Linq.IOrderedEnumerable<Orc.DependencyGraph.INode<N>> Precedents { get; }
-            public Orc.DependencyGraph.INode<N> Previous { get; }
+            public Orc.DependencyGraph.INode<N>? Previous { get; }
             public System.Linq.IOrderedEnumerable<Orc.DependencyGraph.INode<N>> TerminatingDescendants { get; }
             public System.Linq.IOrderedEnumerable<Orc.DependencyGraph.INode<N>> TerminatingPrecedents { get; }
             public N Value { get; }
@@ -123,7 +123,7 @@ namespace Orc.DependencyGraph
         void AddSequences(System.Collections.Generic.IEnumerable<System.Collections.Generic.IEnumerable<T>> sequences);
         bool CanSort();
         bool CanSort(System.Collections.Generic.IEnumerable<T> sequence);
-        Orc.DependencyGraph.INode<T> Find(T value);
+        Orc.DependencyGraph.INode<T>? Find(T value);
         System.Collections.Generic.IEnumerable<Orc.DependencyGraph.INode<T>> GetLeafNodes();
         System.Linq.IOrderedEnumerable<Orc.DependencyGraph.INode<T>> GetNodes(int level);
         System.Linq.IOrderedEnumerable<Orc.DependencyGraph.INode<T>> GetNodesBetween(int levelFrom, int levelTo);

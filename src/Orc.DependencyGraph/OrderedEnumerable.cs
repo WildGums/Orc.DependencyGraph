@@ -7,20 +7,19 @@
 
     internal class OrderedEnumerable<T> : IOrderedEnumerable<T>
     {
-        #region Fields
         private readonly Func<IEnumerable<T>> _enumerator;
-        #endregion
 
-        #region Constructors
         public OrderedEnumerable(Func<IEnumerable<T>> enumerator)
         {
+            ArgumentNullException.ThrowIfNull(enumerator);
+
             _enumerator = enumerator;
         }
-        #endregion
 
-        #region IOrderedEnumerable<T> Members
         public IOrderedEnumerable<T> CreateOrderedEnumerable<TKey>(Func<T, TKey> keySelector, IComparer<TKey>? comparer, bool @descending)
         {
+            ArgumentNullException.ThrowIfNull(keySelector);
+
             throw new NotImplementedException();
         }
 
@@ -34,6 +33,5 @@
         {
             return GetEnumerator();
         }
-        #endregion
     }
 }

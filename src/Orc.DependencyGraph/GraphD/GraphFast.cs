@@ -7,21 +7,16 @@
     using System.Text;
     using Catel.Reflection;
 
-    public class GraphFast<T>
-        : IInternalGraph<T> where T : IEquatable<T>
+    public class GraphFast<T> : IInternalGraph<T> 
+        where T : IEquatable<T>
     {
-        #region Constants
         private const int DefaultCapacity = 4;
-        #endregion
 
-        #region Fields
         private readonly Dictionary<T, InternalNodeFast<T>> _nodes;
 
         private int _countLevels;
         private bool _isDirty = false;
-        #endregion
 
-        #region Constructors
         public GraphFast(int capacity)
         {
             _nodes = new Dictionary<T, InternalNodeFast<T>>(capacity);
@@ -41,6 +36,8 @@
         public GraphFast(IEnumerable<IEnumerable<T>> initialSequences)
             : this()
         {
+            ArgumentNullException.ThrowIfNull(initialSequences);
+
             AddSequences(initialSequences);
         }
 
@@ -51,6 +48,8 @@
         private GraphFast(GraphFast<T> initialGraph)
             : this(initialGraph.CountNodes)
         {
+            ArgumentNullException.ThrowIfNull(initialGraph);
+
             if (initialGraph._isDirty)
             {
                 initialGraph.ReinitializeKeys();
@@ -71,9 +70,7 @@
                 }
             }
         }
-        #endregion
 
-        #region Properties
         public int CountNodes
         {
             get { return _nodes.Count; }
@@ -89,9 +86,7 @@
         }
 
         public int ReferencePoint { get; private set; }
-        #endregion
 
-        #region IInternalGraph<T> Members
         IInternalNode<T> IInternalGraph<T>.GetOrCreateNode(T publicNode)
         {
             return GetOrCreateNode(publicNode);
@@ -99,11 +94,15 @@
 
         public INode<T> Find(T node)
         {
+            ArgumentNullException.ThrowIfNull(node);
+
             return _nodes[node];
         }
 
         public void AddSequence(IEnumerable<T> sequence)
         {
+            ArgumentNullException.ThrowIfNull(sequence);
+
             var nodes = sequence
                 .Select(publicNode => GetOrCreateNode(publicNode))
                 .ToArray();
@@ -118,6 +117,8 @@
 
         public void AddSequences(IEnumerable<IEnumerable<T>> sequences)
         {
+            ArgumentNullException.ThrowIfNull(sequences);
+
             foreach (var sequence in sequences)
             {
                 AddSequence(sequence);
@@ -152,6 +153,8 @@
         /// <returns></returns>
         public bool CanSort(IEnumerable<T> sequence)
         {
+            ArgumentNullException.ThrowIfNull(sequence);
+
             var tempGraph = new GraphFast<T>(this);
             tempGraph.AddSequence(sequence);
             return tempGraph.CanSort();
@@ -201,9 +204,7 @@
 
             File.WriteAllText(filePath, sb.ToString());
         }
-        #endregion
 
-        #region Methods
         private InternalNodeFast<T> GetOrCreateNode(T publicNode)
         {
             if (!_nodes.TryGetValue(publicNode, out var node))
@@ -438,9 +439,7 @@
                 throw new TopologicalSortException("Topological sort failed due to loops in the graph");
             }
         }
-        #endregion
 
-        #region TestHelpers
         IEnumerable<IInternalNode<T>[]> IInternalGraph<T>.Edges
         {
             get
@@ -473,6 +472,5 @@
         {
             get { return _nodes.Values; }
         }
-        #endregion
     }
 }

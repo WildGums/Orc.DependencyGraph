@@ -7,14 +7,11 @@
     public class GraphB<T> : Orc.Sort.TopologicalSort.TopologicalSort<T>, IGraph<T>
         where T : IEquatable<T>
     {
-        #region Fields
         protected IList<INode<T>> _graphList;
         protected IList<INode<T>> _graphSort;
 
         protected List<int> _levelList;
-        #endregion
 
-        #region Constructors
         public GraphB()
             : this(true, false, 0)
         {
@@ -29,9 +26,7 @@
 
             Nodes = Array.Empty<INode<T>>();
         }
-        #endregion
 
-        #region Properties
         public int CountNodes
         {
             get { return _graphList.Count; }
@@ -43,9 +38,7 @@
         }
 
         public IEnumerable<INode<T>> Nodes { get; private set; }
-        #endregion
 
-        #region IGraph<T> Members
         public bool CanSort()
         {
             try
@@ -62,8 +55,9 @@
 
         public void AddSequence(IEnumerable<T> sequence)
         {
-            var sequence_count = sequence.Count();
+            ArgumentNullException.ThrowIfNull(sequence);
 
+            var sequence_count = sequence.Count();
             if (sequence_count == 0)
             {
                 throw new ArgumentException("Adding failed because sequence cannot be empty.");
@@ -129,6 +123,8 @@
 
         public void AddSequences(IEnumerable<IEnumerable<T>> sequences)
         {
+            ArgumentNullException.ThrowIfNull(sequences);
+
             foreach (var sequence in sequences)
             {
                 AddSequence(sequence);
@@ -137,6 +133,8 @@
 
         public INode<T>? Find(T node)
         {
+            ArgumentNullException.ThrowIfNull(node);
+
             if (!nodesDict.TryGetValue(node, out var key))
             {
                 return null;
@@ -184,11 +182,11 @@
         {
             return GetNodes(_levelList.Max());
         }
-        #endregion
 
-        #region Methods
         public IEnumerable<INode<T>> GetNodesRelatedTo(T node)
         {
+            ArgumentNullException.ThrowIfNull(node);
+
             if (!nodesDict.TryGetValue(node, out var key))
             {
                 throw new ArgumentException("node note present in graph");
@@ -203,25 +201,24 @@
 
         public IEnumerable<INode<T>> GetNodesRelatedTo(T node, int levelFrom, int levelTo)
         {
+            ArgumentNullException.ThrowIfNull(node);
+
             return GetNodesRelatedTo(node).Where(n => levelFrom <= n.Level && n.Level <= levelTo);
         }
-        #endregion
+
         public class Node<N> : INode<N>
             where N : IEquatable<N>
         {
-            #region Fields
             private readonly int _key;
-            #endregion
 
-            #region Constructors
             public Node(GraphB<N> graph, int index)
             {
+                ArgumentNullException.ThrowIfNull(graph);
+
                 Graph = graph;
                 _key = index;
             }
-            #endregion
 
-            #region Properties
             public N Value
             {
                 get { return Graph.nodesList[_key]; }
@@ -297,9 +294,7 @@
                     return Graph._graphList[_key - 1];
                 }
             }
-            #endregion
 
-            #region INode<N> Members
             public IOrderedEnumerable<INode<N>> GetNeighbours(int relativeLevelFrom, int relativeLevelTo)
             {
                 var levelFrom = Level + relativeLevelFrom;
@@ -307,14 +302,11 @@
 
                 return new OrderedEnumerable<INode<N>>(() => Graph.GetNodesRelatedTo(Value, levelFrom, levelTo).OrderBy(n => n.Level));
             }
-            #endregion
 
-            #region Methods
             public override string ToString()
             {
                 return $"Node({Value},{Level},{ImmediatePrecedents.Count()},{ImmediateDescendants.Count()})";
             }
-            #endregion
         }
     }
 }

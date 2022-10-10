@@ -7,7 +7,6 @@
     public interface IGraph<T>
         where T : IEquatable<T>
     {
-        #region Properties
         /// <summary>
         /// Returns all nodes of the graph
         /// </summary>
@@ -22,9 +21,7 @@
         /// Gets the number of levels contained in the Graph
         /// </summary>
         int CountLevels { get; }
-        #endregion
 
-        #region Methods
         /// <summary>
         /// Finds a specific node within a graph by a value
         /// </summary>
@@ -100,6 +97,5 @@
         /// Returns nodes on the last level of the Graph
         /// </summary>
         IEnumerable<INode<T>> GetLeafNodes();
-        #endregion
     }
 }

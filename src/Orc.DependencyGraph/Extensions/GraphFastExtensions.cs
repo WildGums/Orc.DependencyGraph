@@ -9,6 +9,10 @@
         public static void PushUnvisited<T>(this Stack<InternalNodeFast<T>> stack, List<InternalNodeFast<T>> list, Func<InternalNodeFast<T>, bool> isVisited)
             where T : IEquatable<T>
         {
+            ArgumentNullException.ThrowIfNull(stack);
+            ArgumentNullException.ThrowIfNull(list);
+            ArgumentNullException.ThrowIfNull(isVisited);
+
             foreach (var child in list)
             {
                 if (isVisited(child))

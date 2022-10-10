@@ -10,18 +10,13 @@
     public class Graph<T>
         : IInternalGraph<T> where T : IEquatable<T>
     {
-        #region Constants
         private const int DefaultCapacity = 4;
-        #endregion
 
-        #region Fields
         private readonly Dictionary<T, InternalNode<T>> _nodes;
 
         private int _countLevels;
         private bool _isDirty = false;
-        #endregion
 
-        #region Constructors
         public Graph(int capacity)
         {
             _nodes = new Dictionary<T, InternalNode<T>>(capacity);
@@ -41,18 +36,20 @@
         public Graph(IEnumerable<IEnumerable<T>> initialSequences)
             : this()
         {
+            ArgumentNullException.ThrowIfNull(initialSequences);
+
             AddSequences(initialSequences);
         }
 
         private Graph(Graph<T> initialGraph)
             : this(initialGraph.CountNodes)
         {
+            ArgumentNullException.ThrowIfNull(initialGraph);
+
             var sequences = (initialGraph as IInternalGraph<T>).Edges.Select(_ => new[] { _[0].Value, _[1].Value });
             AddSequences(sequences);
         }
-        #endregion
 
-        #region Properties
         public int CountNodes
         {
             get { return _nodes.Count; }
@@ -68,21 +65,25 @@
         }
 
         internal int ReferencePoint { get; private set; }
-        #endregion
 
-        #region IInternalGraph<T> Members
         IInternalNode<T> IInternalGraph<T>.GetOrCreateNode(T publicNode)
         {
+            ArgumentNullException.ThrowIfNull(publicNode);
+
             return GetOrCreateNode(publicNode);
         }
 
         public INode<T> Find(T node)
         {
+            ArgumentNullException.ThrowIfNull(node);
+
             return _nodes[node];
         }
 
         public void AddSequence(IEnumerable<T> sequence)
         {
+            ArgumentNullException.ThrowIfNull(sequence);
+
             var nodes = sequence
                 .Select(publicNode => (INode<T>)GetOrCreateNode(publicNode))
                 .ToList();
@@ -99,6 +100,8 @@
 
         public void AddSequences(IEnumerable<IEnumerable<T>> sequences)
         {
+            ArgumentNullException.ThrowIfNull(sequences);
+
             foreach (var sequence in sequences)
             {
                 AddSequence(sequence);
@@ -133,6 +136,8 @@
         /// <returns></returns>
         public bool CanSort(IEnumerable<T> sequence)
         {
+            ArgumentNullException.ThrowIfNull(sequence);
+
             var tempGraph = new Graph<T>(this);
             tempGraph.AddSequence(sequence);
             return tempGraph.CanSort();
@@ -217,11 +222,11 @@
             var propertiesPath = Path.Combine(Directory.GetParent(filePath)?.FullName ?? "", "Properties.csv");
             File.WriteAllText(propertiesPath, sb1.ToString());
         }
-        #endregion
 
-        #region Methods
         private InternalNode<T> GetOrCreateNode(T publicNode)
         {
+            ArgumentNullException.ThrowIfNull(publicNode);
+
             if (!_nodes.TryGetValue(publicNode, out var node))
             {
                 node = new InternalNode<T>(publicNode, this);
@@ -233,6 +238,9 @@
 
         private void AddEdge(INode<T> source, INode<T> destination)
         {
+            ArgumentNullException.ThrowIfNull(source);
+            ArgumentNullException.ThrowIfNull(destination);
+
             var src = (InternalNode<T>)source;
             var dst = (InternalNode<T>)destination;
 
@@ -278,6 +286,8 @@
 
         private int VisitRelations(InternalNode<T> startNode)
         {
+            ArgumentNullException.ThrowIfNull(startNode);
+
             var minLevel = int.MaxValue;
             var visitedNodes = new HashSet<InternalNode<T>>();
             var stack = new Stack<InternalNode<T>>();
@@ -317,6 +327,8 @@
 
         private static int GetMaxLevel(List<InternalNode<T>> internalNodes)
         {
+            ArgumentNullException.ThrowIfNull(internalNodes);
+
             if (internalNodes.Count == 0)
             {
                 return -1;
@@ -453,9 +465,7 @@
                 throw new TopologicalSortException("Topological sort failed due to loops in the graph");
             }
         }
-        #endregion
 
-        #region TestHelpers
         // may be I need to move this to a partial class?
 
         IEnumerable<IInternalNode<T>[]> IInternalGraph<T>.Edges
@@ -490,6 +500,5 @@
         {
             get { return _nodes.Values; }
         }
-        #endregion
     }
 }
