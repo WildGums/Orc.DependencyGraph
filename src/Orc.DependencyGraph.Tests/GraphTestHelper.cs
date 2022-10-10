@@ -9,10 +9,10 @@
     internal static class GraphTestHelper
     {
         #region Methods
-        public static IGraph<int> CreateExampleGraph(Type type)
+        public static IGraph<int>? CreateExampleGraph(Type type)
         {
             var graph = CreateEmptyGraph(type);
-            graph.AddSequences(new[]
+            graph?.AddSequences(new[]
             {
             new[] {51, 61},
             new[] {51, 62},
@@ -49,7 +49,9 @@
             // this example contains difficult cases:
             // - children of node 31 are on different levels
             // - parents of node 51 are on different levels
-            var graph = CreateExampleGraph(type);
+            var graph = CreateExampleGraph(type)!;
+
+            Assert.IsNotNull(graph);
 
             graph.AddSequences(new[]
             {
@@ -60,7 +62,10 @@
 
         public static IGraph<int> CreateSimpleGraph(Type type)
         {
-            var graph = CreateEmptyGraph(type);
+            var graph = CreateEmptyGraph(type)!;
+
+            Assert.IsNotNull(graph);
+
             graph.AddSequences(new[]
             {
             new[] {41, 51, 61, 100},
@@ -76,7 +81,7 @@
                 for (int index = 0; index < sequence.Length - 1; index++)
                 {
                     var node = graph.Find(sequence[index]);
-                    Assert.AreEqual(1, node.ImmediateDescendants.Count(x => x.Value == sequence[index + 1]));
+                    Assert.AreEqual(1, node?.ImmediateDescendants.Count(x => x.Value == sequence[index + 1]));
                 }
             }
         }
@@ -88,7 +93,7 @@
                 for (int index = 0; index < sequence.Length - 1; index++)
                 {
                     var node = graph.Find(sequence[index]);
-                    Assert.AreEqual(1, node.ImmediatePrecedents.Count(x => x.Value == sequence[index + 1]));
+                    Assert.AreEqual(1, node?.ImmediatePrecedents.Count(x => x.Value == sequence[index + 1]));
                 }
             }
         }
@@ -105,8 +110,11 @@
                 "Edge does not contain a back sequence {0}-{1}", edge[0].Value, edge[1].Value);
         }
 
-        public static void AssertCollectionsConsistsOfNodes(ICollection<int> expectedNodes, IEnumerable<INode<int>> nodes)
+        public static void AssertCollectionsConsistsOfNodes(ICollection<int>? expectedNodes, IEnumerable<INode<int>>? nodes)
         {
+            ArgumentNullException.ThrowIfNull(expectedNodes);
+            ArgumentNullException.ThrowIfNull(nodes);
+
             var count = 0;
 
             foreach (var node in nodes)
@@ -117,22 +125,27 @@
             Assert.AreEqual(expectedNodes.Count, count, "Node count expected to be {0}, but was {1}", expectedNodes.Count, count);
         }
 
-        public static void AssertNodesAreOrderedByLevel(IEnumerable<INode<int>> orderedNodes)
+        public static void AssertNodesAreOrderedByLevel(IEnumerable<INode<int>>? orderedNodes)
         {
+            ArgumentNullException.ThrowIfNull(orderedNodes);
+
             var lastLevel = int.MinValue;
             foreach (var node in orderedNodes)
             {
                 if (node.Level >= lastLevel)
+                {
                     lastLevel = node.Level;
+                }
                 else
+                {
                     Assert.Fail("Order of nodes is not correct");
+                }
             }
         }
 
-        public static IGraph<int> CreateEmptyGraph(Type type)
+        public static IGraph<int>? CreateEmptyGraph(Type type)
         {
-            var instance = Activator.CreateInstance(type) as IGraph<int>;
-            return instance;
+            return Activator.CreateInstance(type) as IGraph<int>;
         }
         #endregion
     }

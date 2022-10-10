@@ -48,7 +48,11 @@
             foreach (var node in graph.Nodes)
             {
                 var descendentCount = node.ImmediateDescendants.Count();
-                if (descendentCount == 0) continue; // skip leafs
+                if (descendentCount == 0)
+                {
+                    continue; // skip leafs
+                }
+
                 Assert.AreEqual(expectedDescendantCount, descendentCount,
                     "Number of descendants in the node expected to be {0} but is {1}", expectedDescendantCount, descendentCount);
             }
@@ -59,7 +63,11 @@
             foreach (var node in graph.Nodes)
             {
                 var precedentsCount = node.ImmediatePrecedents.Count();
-                if (precedentsCount == 0) continue; // skip roots
+                if (precedentsCount == 0)
+                {
+                    continue; // skip roots
+                }
+
                 Assert.AreEqual(expectedPrecedentsCount, precedentsCount,
                     "Number of precedents in the node expected to be {0} but is {1}", expectedPrecedentsCount, precedentsCount);
             }

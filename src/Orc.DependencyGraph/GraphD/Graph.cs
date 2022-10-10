@@ -5,6 +5,7 @@
     using System.IO;
     using System.Linq;
     using System.Text;
+    using Catel.Reflection;
 
     public class Graph<T>
         : IInternalGraph<T> where T : IEquatable<T>
@@ -112,7 +113,10 @@
         {
             try
             {
-                foreach (var node in Sort()) ;
+                foreach (var node in Sort())
+                {
+                    ;
+                }
             }
             catch (TopologicalSortException)
             {
@@ -172,12 +176,18 @@
 
             var getId = new Func<T, int>(node =>
             {
-                var nodeKey = node.ToString();
-                if (namesDictionary.ContainsKey(nodeKey)) return namesDictionary[nodeKey];
+                var nodeKey = node.ToString() ?? "Empty";
+                if (namesDictionary.ContainsKey(nodeKey))
+                {
+                    return namesDictionary[nodeKey];
+                }
+
                 var newId = namesDictionary.Count;
                 namesDictionary[nodeKey] = newId;
+
                 return newId;
             });
+
             // export Edges
             var sb = new StringBuilder();
             sb.AppendLine("From,To");
@@ -204,7 +214,7 @@
             sb1.Length--;
             sb1.Length--;
 
-            var propertiesPath = Path.Combine(Directory.GetParent(filePath).FullName, "Properties.csv");
+            var propertiesPath = Path.Combine(Directory.GetParent(filePath)?.FullName ?? "", "Properties.csv");
             File.WriteAllText(propertiesPath, sb1.ToString());
         }
         #endregion
@@ -239,11 +249,14 @@
 
         private void ComputeLevels()
         {
-            if (!_isDirty) return;
+            if (!_isDirty)
+            {
+                return;
+            }
 
             // find the deepest node
             var orderedNodes = Sort();
-            var deepestNode = new InternalNode<T>(default, null) { ReferenceRelativeLevel = int.MinValue };
+            var deepestNode = orderedNodes.FirstOrDefault() as InternalNode<T> ?? throw new NotSupportedException($"Expecting type supporting implicit casting to type {typeof(InternalNodeFast<T>).GetSafeFullName()}");
             foreach (InternalNode<T> node in orderedNodes)
             {
                 node.ReferenceRelativeLevel = GetMaxLevel(node.Parents) + 1;
@@ -312,12 +325,12 @@
             return internalNodes.Max(_ => _.ReferenceRelativeLevel);
         }
 
-        private IEnumerable<INode<T>> GetNodes(INode<T> startNode, Func<IInternalNode<T>, bool> predicate)
+        private IEnumerable<INode<T>> GetNodes(IInternalNode<T> startNode, Func<IInternalNode<T>, bool> predicate)
         {
             ComputeLevels();
             var visitedNodes = new HashSet<IInternalNode<T>>();
             var stack = new Stack<IInternalNode<T>>();
-            stack.Push(startNode as IInternalNode<T>);
+            stack.Push(startNode);
             while (stack.Count != 0)
             {
                 var node = stack.Pop();

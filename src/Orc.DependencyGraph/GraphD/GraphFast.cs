@@ -5,6 +5,7 @@
     using System.IO;
     using System.Linq;
     using System.Text;
+    using Catel.Reflection;
 
     public class GraphFast<T>
         : IInternalGraph<T> where T : IEquatable<T>
@@ -51,7 +52,9 @@
             : this(initialGraph.CountNodes)
         {
             if (initialGraph._isDirty)
+            {
                 initialGraph.ReinitializeKeys();
+            }
 
             var nodeKeys = new InternalNodeFast<T>[initialGraph.CountNodes];
             foreach (var node in initialGraph._nodes)
@@ -129,7 +132,10 @@
         {
             try
             {
-                foreach (var node in Sort()) ;
+                foreach (var node in Sort())
+                {
+                    ;
+                }
             }
             catch (TopologicalSortException)
             {
@@ -211,15 +217,15 @@
 
         private void AddEdge(InternalNodeFast<T> source, InternalNodeFast<T> destination)
         {
-            if (source.Edges.Count(_ => _ == destination) == 0)
+            if (!source.Edges.Any(edge => edge == destination))
             {
                 source.Edges.Add(destination);
             }
 
-            if (destination.Parents.Count(_ => _ == source) == 0)
+            if (!destination.Parents.Any(parent => parent == source))
             {
                 destination.Parents.Add(source); // try to move inside the previous if
-}
+            }
         }
 
         private void ComputeLevels()
@@ -233,7 +239,8 @@
 
             // find the deepest node
             var orderedNodes = Sort();
-            var deepestNode = new InternalNodeFast<T>(default, null) {ReferenceRelativeLevel = int.MinValue};
+            var deepestNode = orderedNodes.FirstOrDefault() as InternalNodeFast<T> ?? throw new NotSupportedException($"Expecting type supporting implicit casting to type {typeof(InternalNodeFast<T>).GetSafeFullName()}");
+
             foreach (InternalNodeFast<T> node in orderedNodes)
             {
                 node.ReferenceRelativeLevel = GetMaxLevel(node.Parents) + 1;
@@ -319,12 +326,14 @@
             return GetNodes(_nodes.Values.First(), (_ => _.Level == level));
         }
 
-        private IEnumerable<INode<T>> GetNodes(INode<T> startNode, Func<IInternalNode<T>, bool> predicate)
+        private IEnumerable<INode<T>> GetNodes(InternalNodeFast<T> startNode, Func<IInternalNode<T>, bool> predicate)
         {
             ComputeLevels();
+
             var stack = new Stack<InternalNodeFast<T>>();
             var visitedNodes = new bool[_nodes.Count];
-            stack.Push(startNode as InternalNodeFast<T>);
+            stack.Push(startNode);
+
             while (stack.Count != 0)
             {
                 var node = stack.Pop();
@@ -340,34 +349,19 @@
                     yield return node;
                 }
 
-                foreach (var parent in node.Parents)
-                {
-                    if (visitedNodes[parent.Key])
-                    {
-                        continue;
-                    }
-
-                    stack.Push(parent);
-                }
-
-                foreach (var child in node.Edges)
-                {
-                    if (visitedNodes[child.Key])
-                    {
-                        continue;
-                    }
-
-                    stack.Push(child);
-                }
+                stack.PushUnvisited(node.Parents, node => visitedNodes[node.Key]);
+                stack.PushUnvisited(node.Edges, node => visitedNodes[node.Key]);
             }
         }
 
-        internal IEnumerable<INode<T>> GetPrecedents(IInternalNode<T> startNode, Func<IInternalNode<T>, bool> predicate)
+        internal IEnumerable<INode<T>> GetPrecedents(InternalNodeFast<T> startNode, Func<IInternalNode<T>, bool> predicate)
         {
             ComputeLevels();
+
             var visitedNodes = new bool[_nodes.Count];
             var stack = new Stack<InternalNodeFast<T>>();
-            stack.Push(startNode as InternalNodeFast<T>);
+            stack.Push(startNode);
+
             while (stack.Count != 0)
             {
                 var node = stack.Pop();
@@ -377,24 +371,18 @@
                     yield return node;
                 }
 
-                foreach (var parent in node.Parents)
-                {
-                    if (visitedNodes[parent.Key])
-                    {
-                        continue;
-                    }
-
-                    stack.Push(parent);
-                }
+                stack.PushUnvisited(node.Parents, node => visitedNodes[node.Key]);
             }
         }
 
-        internal IEnumerable<INode<T>> GetDescendants(IInternalNode<T> startNode, Func<IInternalNode<T>, bool> predicate)
+        internal IEnumerable<INode<T>> GetDescendants(InternalNodeFast<T> startNode, Func<IInternalNode<T>, bool> predicate)
         {
             ComputeLevels();
+
             var visitedNodes = new bool[_nodes.Count];
             var stack = new Stack<InternalNodeFast<T>>();
-            stack.Push(startNode as InternalNodeFast<T>);
+            stack.Push(startNode);
+
             while (stack.Count != 0)
             {
                 var node = stack.Pop();
@@ -405,15 +393,7 @@
                     yield return node;
                 }
 
-                foreach (var child in node.Edges)
-                {
-                    if (visitedNodes[child.Key])
-                    {
-                        continue;
-                    }
-
-                    stack.Push(child);
-                }
+                stack.PushUnvisited(node.Edges, node => visitedNodes[node.Key]);
             }
         }
 
@@ -469,7 +449,7 @@
                 {
                     foreach (var child in node.Edges)
                     {
-                        yield return new[] {node, child};
+                        yield return new[] { node, child };
                     }
                 }
             }
@@ -483,7 +463,7 @@
                 {
                     foreach (var parent in node.Parents)
                     {
-                        yield return new[] {node, parent}; // Attention: the order is opposite!
+                        yield return new[] { node, parent }; // Attention: the order is opposite!
                     }
                 }
             }

@@ -26,6 +26,8 @@
             _graphList = new List<INode<T>>(capacity);
             _graphSort = new List<INode<T>>(capacity);
             _levelList = new List<int>(capacity);
+
+            Nodes = Array.Empty<INode<T>>();
         }
         #endregion
 
@@ -133,7 +135,7 @@
             }
         }
 
-        public INode<T> Find(T node)
+        public INode<T>? Find(T node)
         {
             if (!nodesDict.TryGetValue(node, out var key))
             {
@@ -165,7 +167,9 @@
 
             if (nodesSort.Count != _graphSort.Count)
             {
-                _graphSort = nodesSort.Select(Find).ToList();
+#pragma warning disable CL0006 // Using "is" statement inside null comparison expression is recommended style
+                _graphSort = nodesSort.Select(Find).Where(node => node != null).ToList()!;
+#pragma warning restore CL0006 // Using "is" statement inside null comparison expression is recommended style
             }
 
             return new OrderedEnumerable<INode<T>>(() => _graphSort);
@@ -266,18 +270,22 @@
                 get { return new OrderedEnumerable<INode<N>>(() => Graph.GetDependents(_key, false, true).OrderBy(i => Graph._levelList[i]).Select(i => Graph._graphList[i])); }
             }
 
-            public INode<N> Next
+            public INode<N>? Next
             {
                 get
                 {
                     if (_key + 1 >= Graph._graphList.Count)
+                    {
                         return null;
+                    }
                     else
+                    {
                         return Graph._graphList[_key + 1];
+                    }
                 }
             }
 
-            public INode<N> Previous
+            public INode<N>? Previous
             {
                 get
                 {

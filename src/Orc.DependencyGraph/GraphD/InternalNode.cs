@@ -7,7 +7,7 @@
     using System.Text;
 
     [DebuggerDisplay("{Value.ToString()}: [{(this as IInternalNode<T>).PrintImmediatePrecedents}]")]
-    internal class InternalNode<T> : IInternalNode<T> 
+    internal class InternalNode<T> : IInternalNode<T>
         where T : IEquatable<T>
     {
         #region Fields

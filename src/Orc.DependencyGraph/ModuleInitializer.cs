@@ -1,4 +1,4 @@
-using Catel.IoC;
+﻿using Catel.IoC;
 using Catel.Services;
 using Orc.DependencyGraph;
 
@@ -14,9 +14,9 @@ public static class ModuleInitializer
     {
         var serviceLocator = ServiceLocator.Default;
 
-		// TODO: register services here
+        // TODO: register services here
 
         var languageService = serviceLocator.ResolveType<ILanguageService>();
-        languageService.RegisterLanguageSource(new LanguageResourceSource("Orc.DependencyGraph", "Orc.DependencyGraph.Properties", "Resources"));
+        languageService?.RegisterLanguageSource(new LanguageResourceSource("Orc.DependencyGraph", "Orc.DependencyGraph.Properties", "Resources"));
     }
 }

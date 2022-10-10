@@ -1,4 +1,4 @@
-namespace Orc.DependencyGraph.GraphD
+﻿namespace Orc.DependencyGraph.GraphD
 {
     using System;
     using System.Collections.Generic;
@@ -7,7 +7,7 @@ namespace Orc.DependencyGraph.GraphD
     using System.Text;
 
     [DebuggerDisplay("{Value.ToString()}: [{(this as IInternalNode<T>).PrintImmediatePrecedents}]")]
-    internal class InternalNodeFast<T> : IInternalNode<T> 
+    internal class InternalNodeFast<T> : IInternalNode<T>
         where T : IEquatable<T>
     {
         #region Fields
@@ -17,6 +17,7 @@ namespace Orc.DependencyGraph.GraphD
         #endregion
 
         #region Constructors
+
         internal InternalNodeFast(T publicNode, GraphFast<T> graph)
         {
             Edges = new List<InternalNodeFast<T>>();

@@ -5,6 +5,7 @@
     <RootNamespace>Orc.DependencyGraph.Example</RootNamespace>
     <DefaultLanguage>en-US</DefaultLanguage>
     <SonarQubeExclude>true</SonarQubeExclude>
+    <Nullable>enable</Nullable>
   </PropertyGroup>
 
   <PropertyGroup>

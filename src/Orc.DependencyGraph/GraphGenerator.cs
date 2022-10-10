@@ -43,7 +43,7 @@
 
                 parent.Edges.Add(nextChildNode.Node);
 
-                graph.AddSequence(new[] {parent.Node, nextChildNode.Node});
+                graph.AddSequence(new[] { parent.Node, nextChildNode.Node });
             }
         }
 
@@ -72,9 +72,9 @@
             }
         }
 
-        private static QueueElement DequeueFreeChild(LinkedList<QueueElement> childrenQueue, QueueElement parentNode, int precedents)
+        private static QueueElement? DequeueFreeChild(LinkedList<QueueElement> childrenQueue, QueueElement parentNode, int precedents)
         {
-            var freeChild = childrenQueue.FirstOrDefault(childNode => parentNode.Edges.Count(_ => _ == childNode.Node) <= 0);
+            var freeChild = childrenQueue.FirstOrDefault(childNode => !parentNode.Edges.Any(node => node == childNode.Node));
             if (freeChild is null)
             {
                 return null;
@@ -99,7 +99,7 @@
 
             var growth = max / min;
             var result = 0;
-            var nodesOnLevel = new Func<int, int>(level => { return (int) (min * Math.Pow(growth, levels - level - 1)); });
+            var nodesOnLevel = new Func<int, int>(level => { return (int)(min * Math.Pow(growth, levels - level - 1)); });
             for (var i = 0; i < levels; i++)
             {
                 result += nodesOnLevel(i);
@@ -115,10 +115,10 @@
             var growth = max / min;
             if (descendants > precendents)
             {
-                return (int) (min * Math.Pow(growth, level));
+                return (int)(min * Math.Pow(growth, level));
             }
 
-            return (int) (min * Math.Pow(growth, levels - level - 1));
+            return (int)(min * Math.Pow(growth, levels - level - 1));
         }
 
         private static void ValidateParameters(int descendantCount, int precedentCount)

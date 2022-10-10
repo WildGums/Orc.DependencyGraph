@@ -30,7 +30,7 @@
         /// </summary>
         /// <param name="value">The value of node to search</param>
         /// <returns>The node associated with the specified value</returns>
-        INode<T> Find(T value);
+        INode<T>? Find(T value);
 
         /// <summary>
         /// Adds a sequence to the graph

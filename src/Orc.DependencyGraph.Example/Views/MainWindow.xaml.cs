@@ -1,6 +1,6 @@
 namespace Orc.DependencyGraph.Views
 {
-    public partial class MainWindow 
+    public partial class MainWindow
     {
         #region Constructors
         public MainWindow()

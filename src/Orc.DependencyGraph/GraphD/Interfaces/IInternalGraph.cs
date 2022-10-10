@@ -3,7 +3,7 @@
     using System;
     using System.Collections.Generic;
 
-    public interface IInternalGraph<T> : IGraph<T> 
+    public interface IInternalGraph<T> : IGraph<T>
         where T : IEquatable<T>
     {
         #region Properties

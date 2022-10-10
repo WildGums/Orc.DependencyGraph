@@ -1,4 +1,4 @@
-namespace Orc.DependencyGraph
+﻿namespace Orc.DependencyGraph
 {
     using System;
     using System.Collections;
@@ -19,7 +19,7 @@ namespace Orc.DependencyGraph
         #endregion
 
         #region IOrderedEnumerable<T> Members
-        public IOrderedEnumerable<T> CreateOrderedEnumerable<TKey>(Func<T, TKey> keySelector, IComparer<TKey> comparer, bool @descending)
+        public IOrderedEnumerable<T> CreateOrderedEnumerable<TKey>(Func<T, TKey> keySelector, IComparer<TKey>? comparer, bool @descending)
         {
             throw new NotImplementedException();
         }
