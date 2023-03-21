@@ -4,11 +4,10 @@
     using System.Collections.Generic;
     using System.Linq;
     using NUnit.Framework;
-    using Orc.DependencyGraph;
+    using DependencyGraph;
 
     internal static class GraphTestHelper
     {
-        #region Methods
         public static IGraph<int> CreateExampleGraph(Type type)
         {
             var graph = CreateEmptyGraph(type);
@@ -151,7 +150,6 @@
 
             return instance;
         }
-        #endregion
     }
 
 }

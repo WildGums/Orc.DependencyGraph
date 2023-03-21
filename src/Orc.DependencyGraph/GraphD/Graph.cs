@@ -219,7 +219,7 @@
             sb1.Length--;
             sb1.Length--;
 
-            var propertiesPath = Path.Combine(Directory.GetParent(filePath)?.FullName ?? "", "Properties.csv");
+            var propertiesPath = Path.Combine(Directory.GetParent(filePath)?.FullName ?? string.Empty, "Properties.csv");
             File.WriteAllText(propertiesPath, sb1.ToString());
         }
 
