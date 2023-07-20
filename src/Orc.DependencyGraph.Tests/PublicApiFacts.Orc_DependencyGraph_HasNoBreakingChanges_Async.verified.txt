@@ -1,7 +1,7 @@
 ﻿[assembly: System.Resources.NeutralResourcesLanguage("en-US")]
 [assembly: System.Runtime.CompilerServices.InternalsVisibleTo("Orc.DependencyGraph.PerformanceTest")]
 [assembly: System.Runtime.CompilerServices.InternalsVisibleTo("Orc.DependencyGraph.Tests")]
-[assembly: System.Runtime.Versioning.TargetFramework(".NETCoreApp,Version=v6.0", FrameworkDisplayName="")]
+[assembly: System.Runtime.Versioning.TargetFramework(".NETCoreApp,Version=v6.0", FrameworkDisplayName=".NET 6.0")]
 public static class ModuleInitializer
 {
     public static void Initialize() { }
