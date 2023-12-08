@@ -28,11 +28,10 @@
         {
             var graph = GraphTestHelper.CreateExampleGraph(TargetGraph);
 
-            Assert.NotNull(graph);
+            Assert.That(graph, Is.Not.Null);
             _ = graph.CountLevels; // force graph to rebuild. fix this later
             var target = graph.Find(node);
-            Assert.AreEqual(expectedLevel, target?.Level,
-                "Level of node {0} expected to be {1}, but is {2}", target?.Value, expectedLevel, target?.Level);
+            Assert.That(target?.Level, Is.EqualTo(expectedLevel), $"Level of node {target?.Value} expected to be {expectedLevel}, but is {target?.Level}");
         }
 
         [TestCase(31, new[] { 21, 22, 23, 24, 41, 42, 43, 51 })]
@@ -110,7 +109,7 @@
         {
             var graph = GraphTestHelper.CreateEmptyGraph(TargetGraph)!;
 
-            Assert.IsNotNull(graph);
+            Assert.That(graph, Is.Not.Null);
 
             graph.AddSequences(new[]
             {
@@ -125,7 +124,7 @@
             for (var level = 0; level < countLevels; level++)
             {
                 var nodesOnLevel = graph.GetNodes(level).Count();
-                Assert.IsTrue(nodesOnLevel > 0);
+                Assert.That(nodesOnLevel > 0, Is.True);
             }
         }
     }

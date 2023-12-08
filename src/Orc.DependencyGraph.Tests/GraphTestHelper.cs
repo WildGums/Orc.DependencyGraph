@@ -50,7 +50,7 @@
             // - parents of node 51 are on different levels
             var graph = CreateExampleGraph(type);
 
-            Assert.IsNotNull(graph);
+            Assert.That(graph, Is.Not.Null);
 
             graph.AddSequences(new[]
             {
@@ -63,7 +63,7 @@
         {
             var graph = CreateEmptyGraph(type);
 
-            Assert.IsNotNull(graph);
+            Assert.That(graph, Is.Not.Null);
 
             graph.AddSequences(new[]
             {
@@ -80,7 +80,7 @@
                 for (var index = 0; index < sequence.Length - 1; index++)
                 {
                     var node = graph.Find(sequence[index]);
-                    Assert.AreEqual(1, node?.ImmediateDescendants.Count(x => x.Value == sequence[index + 1]));
+                    Assert.That(node?.ImmediateDescendants.Count(x => x.Value == sequence[index + 1]), Is.EqualTo(1));
                 }
             }
         }
@@ -92,21 +92,19 @@
                 for (var index = 0; index < sequence.Length - 1; index++)
                 {
                     var node = graph.Find(sequence[index]);
-                    Assert.AreEqual(1, node?.ImmediatePrecedents.Count(x => x.Value == sequence[index + 1]));
+                    Assert.That(node?.ImmediatePrecedents.Count(x => x.Value == sequence[index + 1]), Is.EqualTo(1));
                 }
             }
         }
 
         public static void AssertContainsSequence(int[][] sequences, INode<int>[] edge)
         {
-            Assert.AreEqual(1, sequences.Count(_ => _[0] == edge[0].Value && _[1] == edge[1].Value),
-                "Edge does not contain a sequence {0}-{1}", edge[0].Value, edge[1].Value);
+            Assert.That(sequences.Count(_ => _[0] == edge[0].Value && _[1] == edge[1].Value), Is.EqualTo(1), $"Edge does not contain a sequence {edge[0].Value}-{edge[1].Value}");
         }
 
         public static void AssertContainsBackSequence(int[][] sequences, INode<int>[] edge)
         {
-            Assert.AreEqual(1, sequences.Count(_ => _[0] == edge[0].Value && _[1] == edge[1].Value),
-                "Edge does not contain a back sequence {0}-{1}", edge[0].Value, edge[1].Value);
+            Assert.That(sequences.Count(_ => _[0] == edge[0].Value && _[1] == edge[1].Value), Is.EqualTo(1), $"Edge does not contain a back sequence {edge[0].Value}-{edge[1].Value}");
         }
 
         public static void AssertCollectionsConsistsOfNodes(ICollection<int>? expectedNodes, IEnumerable<INode<int>>? nodes)
@@ -118,10 +116,10 @@
 
             foreach (var node in nodes)
             {
-                Assert.IsTrue(expectedNodes.Contains(node.Value), "Expected result does not contain node {0}", node.Value);
+                Assert.That(expectedNodes.Contains(node.Value), Is.True, $"Expected result does not contain node {node.Value}");
                 count++;
             }
-            Assert.AreEqual(expectedNodes.Count, count, "Node count expected to be {0}, but was {1}", expectedNodes.Count, count);
+            Assert.That(count, Is.EqualTo(expectedNodes.Count), $"Node count expected to be {expectedNodes.Count}, but was {count}");
         }
 
         public static void AssertNodesAreOrderedByLevel(IEnumerable<INode<int>>? orderedNodes)
@@ -146,10 +144,9 @@
         {
             var instance = Activator.CreateInstance(type) as IGraph<int>;
 
-            Assert.IsNotNull(instance);
+            Assert.That(instance, Is.Not.Null);
 
             return instance;
         }
     }
-
 }

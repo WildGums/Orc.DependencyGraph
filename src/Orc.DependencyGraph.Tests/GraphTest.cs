@@ -26,8 +26,8 @@
         {
             var graph = GraphTestHelper.CreateExampleGraph(TargetGraph);
 
-            Assert.IsNotNull(graph);
-            Assert.AreEqual(node, graph.Find(node)?.Value);
+            Assert.That(graph, Is.Not.Null);
+            Assert.That(graph.Find(node)?.Value, Is.EqualTo(node));
         }
 
         [TestCase(0, new[] { 11, 12 })]
@@ -40,7 +40,7 @@
         {
             var graph = GraphTestHelper.CreateExampleGraph(TargetGraph);
 
-            Assert.IsNotNull(graph);
+            Assert.That(graph, Is.Not.Null);
 
             GraphTestHelper.AssertCollectionsConsistsOfNodes(expectedNodes, graph.GetNodes(level));
             GraphTestHelper.AssertNodesAreOrderedByLevel(graph.GetNodes(level));
@@ -51,7 +51,7 @@
         {
             var graph = GraphTestHelper.CreateExampleGraph(TargetGraph);
 
-            Assert.IsNotNull(graph);
+            Assert.That(graph, Is.Not.Null);
 
             GraphTestHelper.AssertCollectionsConsistsOfNodes(expectedNodes, graph.GetRootNodes());
         }
@@ -61,7 +61,7 @@
         {
             var graph = GraphTestHelper.CreateExampleGraph(TargetGraph);
 
-            Assert.IsNotNull(graph);
+            Assert.That(graph, Is.Not.Null);
 
             GraphTestHelper.AssertCollectionsConsistsOfNodes(expectedNodes, graph.GetLeafNodes());
         }
@@ -74,7 +74,7 @@
         {
             var graph = GraphTestHelper.CreateExampleGraph(TargetGraph);
 
-            Assert.IsNotNull(graph);
+            Assert.That(graph, Is.Not.Null);
 
             GraphTestHelper.AssertCollectionsConsistsOfNodes(expectedNodes, graph.GetNodesBetween(levelFrom, levelTo));
             GraphTestHelper.AssertNodesAreOrderedByLevel(graph.GetNodesBetween(levelFrom, levelTo));
@@ -91,10 +91,11 @@
                     {
                         if (!visitedNodes.Contains(parent.Value))
                         {
-                            Assert.Fail("Topological sort is not valid. {0} is before {1}", node.Value, parent.Value);
+                            Assert.Fail($"Topological sort is not valid. {node.Value} is before {parent.Value}");
                         }
                     }
                 }
+
                 visitedNodes.Add(node.Value);
             }
         }
@@ -105,10 +106,10 @@
             // {41, 51, 61, 100},
             // {42, 52, 62, 100},
             var graph = GraphTestHelper.CreateSimpleGraph(TargetGraph);
-            Assert.AreEqual(7, graph.CountNodes);
+            Assert.That(graph.CountNodes, Is.EqualTo(7));
             graph.AddSequence(new[] { 51, 61 });
             graph.AddSequence(new[] { 42, 52 });
-            Assert.AreEqual(7, graph.CountNodes);
+            Assert.That(graph.CountNodes, Is.EqualTo(7));
 
             GraphTestHelper.AssertConsistsOfSequences(graph, new[]
             {
@@ -128,7 +129,7 @@
         {
             var target = GraphTestHelper.CreateEmptyGraph(TargetGraph)!;
 
-            Assert.IsNotNull(target);
+            Assert.That(target, Is.Not.Null);
 
             target.AddSequence(new[] { 0, 1 });
             target.AddSequence(new[] { 1, 2 });
@@ -139,7 +140,7 @@
             target.AddSequence(new[] { 6, 7 });
             target.AddSequence(new[] { 7, 8 });
             target.AddSequence(new[] { 8, 9 });
-            Assert.AreEqual(10, target.CountNodes);
+            Assert.That(target.CountNodes, Is.EqualTo(10));
             GraphTestHelper.AssertConsistsOfSequences(target, new[]
             {
                 new[] {0, 1},
@@ -173,14 +174,14 @@
         {
             var graph = GraphTestHelper.CreateEmptyGraph(TargetGraph)!;
 
-            Assert.NotNull(graph);
+            Assert.That(graph, Is.Not.Null);
 
             graph.AddSequences(new[]
             {
                 new[] {41, 51, 61, 100},
                 new[] {42, 52, 62, 100},
             });
-            Assert.AreEqual(7, graph.CountNodes);
+            Assert.That(graph.CountNodes, Is.EqualTo(7));
             GraphTestHelper.AssertConsistsOfSequences(graph, new[]
             {
                 new[] {41, 51},
@@ -198,7 +199,7 @@
         public void CanSortReturnsWhetherGraphCanBeSorted1()
         {
             var graph = GraphTestHelper.CreateSimpleGraph(TargetGraph);
-            Assert.True(graph.CanSort());
+            Assert.That(graph.CanSort(), Is.True);
         }
 
         [Test]
@@ -207,26 +208,26 @@
             // {41, 51, 61, 100},
             // {42, 52, 62, 100},
             var graph = GraphTestHelper.CreateSimpleGraph(TargetGraph);
-            Assert.True(graph.CanSort());
+            Assert.That(graph.CanSort(), Is.True);
             graph.AddSequences(new[]
             {
                 new[] {100, 41},
             });
-            Assert.False(graph.CanSort());
+            Assert.That(graph.CanSort(), Is.False);
         }
 
         [Test]
         public void CanSortReturnsWhetherGraphWithTheSequenceCanBeSorted1()
         {
             var graph = GraphTestHelper.CreateSimpleGraph(TargetGraph);
-            Assert.True(graph.CanSort(new[] { 43, 52, 63, 100 }));
+            Assert.That(graph.CanSort(new[] { 43, 52, 63, 100 }), Is.True);
         }
 
         [Test]
         public void CanSortReturnsWhetherGraphWithTheSequenceCanBeSorted2()
         {
             var graph = GraphTestHelper.CreateSimpleGraph(TargetGraph);
-            Assert.False(graph.CanSort(new[] { 100, 41 }));
+            Assert.That(graph.CanSort(new[] { 100, 41 }), Is.False);
         }
 
         [Test]
@@ -234,10 +235,10 @@
         {
             var target = GraphTestHelper.CreateEmptyGraph(TargetGraph)!;
 
-            Assert.NotNull(target);
+            Assert.That(target, Is.Not.Null);
 
             target.AddSequence(new[] { 1, 2, 3, 4, 5 });
-            Assert.AreEqual(5, target.CountNodes);
+            Assert.That(target.CountNodes, Is.EqualTo(5));
             GraphTestHelper.AssertConsistsOfSequences(target, new[]
             {
                 new[] {1, 2},
@@ -253,14 +254,14 @@
         {
             var target = GraphTestHelper.CreateEmptyGraph(TargetGraph)!;
 
-            Assert.NotNull(target);
+            Assert.That(target, Is.Not.Null);
 
             target.AddSequences(new[]
             {
                 new[] {1, 2, 3, 4, 5},
                 new[] {11, 12, 13, 14, 5},
             });
-            Assert.AreEqual(9, target.CountNodes);
+            Assert.That(target.CountNodes, Is.EqualTo(9));
             GraphTestHelper.AssertConsistsOfSequences(target, new[]
             {
                 new[] {1, 2},
@@ -281,9 +282,9 @@
         {
             var graph = GraphTestHelper.CreateExampleGraph(TargetGraph);
 
-            Assert.NotNull(graph);
+            Assert.That(graph, Is.Not.Null);
 
-            Assert.AreEqual(6, graph.CountLevels);
+            Assert.That(graph.CountLevels, Is.EqualTo(6));
         }
 
         [Test]
@@ -291,7 +292,7 @@
         {
             var graph = GraphTestHelper.CreateEmptyGraph(TargetGraph);
 
-            Assert.NotNull(graph);
+            Assert.That(graph, Is.Not.Null);
 
             graph.AddSequences(new[]
             {
@@ -299,7 +300,7 @@
                 new[] {2, 3, 4, 5},
                 new[] {9, 8, 7, 6},
             });
-            Assert.AreEqual(6, graph.CountLevels);
+            Assert.That(graph.CountLevels, Is.EqualTo(6));
         }
 
         [Test]
@@ -307,9 +308,9 @@
         {
             var graph = GraphTestHelper.CreateExampleGraph(TargetGraph);
 
-            Assert.NotNull(graph);
+            Assert.That(graph, Is.Not.Null);
 
-            Assert.AreEqual(20, graph.CountNodes);
+            Assert.That(graph.CountNodes, Is.EqualTo(20));
         }
 
         [Test]
@@ -317,7 +318,7 @@
         {
             var graph = GraphTestHelper.CreateEmptyGraph(TargetGraph)!;
 
-            Assert.NotNull(graph);
+            Assert.That(graph, Is.Not.Null);
 
             graph.AddSequence(new[] { 1 });
             GraphTestHelper.AssertCollectionsConsistsOfNodes(new[] { 1 }, graph.GetRootNodes());
@@ -333,11 +334,11 @@
         {
             var graph = GraphTestHelper.CreateExampleGraph(TargetGraph);
 
-            Assert.NotNull(graph);
+            Assert.That(graph, Is.Not.Null);
 
             var nodes = graph.Sort();
 
-            Assert.AreEqual(20, nodes.Count());
+            Assert.That(nodes.Count(), Is.EqualTo(20));
             AssertNodesAreInTopologicalOrder(nodes);
         }
 
@@ -348,7 +349,7 @@
             {
                 var graph = GraphTestHelper.CreateExampleGraph(TargetGraph);
 
-                Assert.NotNull(graph);
+                Assert.That(graph, Is.Not.Null);
 
                 graph.AddSequence(new[] { 61, 11 });
                 graph.Sort().ToArray();
