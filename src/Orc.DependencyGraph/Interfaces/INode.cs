@@ -1,11 +1,4 @@
-﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="INode.cs" company="WildGums">
-//   Copyright (c) 2008 - 2017 WildGums. All rights reserved.
-// </copyright>
-// --------------------------------------------------------------------------------------------------------------------
-
-
-namespace Orc.DependencyGraph
+﻿namespace Orc.DependencyGraph
 {
     using System;
     using System.Linq;
@@ -17,7 +10,6 @@ namespace Orc.DependencyGraph
     public interface INode<T>
         where T : IEquatable<T>
     {
-        #region Properties
         /// <summary>
         /// The value associated with the node
         /// </summary>
@@ -63,9 +55,7 @@ namespace Orc.DependencyGraph
         /// Finds descendants on the last level of the graph
         /// </summary>
         IOrderedEnumerable<INode<T>> TerminatingDescendants { get; }
-        #endregion
 
-        #region Methods
         //  relativeLevel >= relativeLevelFrom && relativeLevel <= relativeLevelTo       
         /// <summary>
         /// Find neighbors related to the node.
@@ -74,6 +64,5 @@ namespace Orc.DependencyGraph
         /// <param name="relativeLevelTo">A value that defines an end of relative level range of nodes to search for</param>
         /// <returns>An IOrderedEnumerable whose elements are sorted in topological order</returns>
         IOrderedEnumerable<INode<T>> GetNeighbours(int relativeLevelFrom, int relativeLevelTo);
-        #endregion
     }
 }

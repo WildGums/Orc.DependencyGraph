@@ -1,33 +1,22 @@
-﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="Graph.cs" company="WildGums">
-//   Copyright (c) 2008 - 2017 WildGums. All rights reserved.
-// </copyright>
-// --------------------------------------------------------------------------------------------------------------------
-
-
-namespace Orc.DependencyGraph.GraphD
+﻿namespace Orc.DependencyGraph.GraphD
 {
     using System;
     using System.Collections.Generic;
     using System.IO;
     using System.Linq;
     using System.Text;
+    using Catel.Reflection;
 
     public class Graph<T>
         : IInternalGraph<T> where T : IEquatable<T>
     {
-        #region Constants
         private const int DefaultCapacity = 4;
-        #endregion
 
-        #region Fields
         private readonly Dictionary<T, InternalNode<T>> _nodes;
 
         private int _countLevels;
         private bool _isDirty = false;
-        #endregion
 
-        #region Constructors
         public Graph(int capacity)
         {
             _nodes = new Dictionary<T, InternalNode<T>>(capacity);
@@ -47,18 +36,20 @@ namespace Orc.DependencyGraph.GraphD
         public Graph(IEnumerable<IEnumerable<T>> initialSequences)
             : this()
         {
+            ArgumentNullException.ThrowIfNull(initialSequences);
+
             AddSequences(initialSequences);
         }
 
         private Graph(Graph<T> initialGraph)
             : this(initialGraph.CountNodes)
         {
+            ArgumentNullException.ThrowIfNull(initialGraph);
+
             var sequences = (initialGraph as IInternalGraph<T>).Edges.Select(_ => new[] { _[0].Value, _[1].Value });
             AddSequences(sequences);
         }
-        #endregion
 
-        #region Properties
         public int CountNodes
         {
             get { return _nodes.Count; }
@@ -74,21 +65,25 @@ namespace Orc.DependencyGraph.GraphD
         }
 
         internal int ReferencePoint { get; private set; }
-        #endregion
 
-        #region IInternalGraph<T> Members
         IInternalNode<T> IInternalGraph<T>.GetOrCreateNode(T publicNode)
         {
+            ArgumentNullException.ThrowIfNull(publicNode);
+
             return GetOrCreateNode(publicNode);
         }
 
         public INode<T> Find(T node)
         {
+            ArgumentNullException.ThrowIfNull(node);
+
             return _nodes[node];
         }
 
         public void AddSequence(IEnumerable<T> sequence)
         {
+            ArgumentNullException.ThrowIfNull(sequence);
+
             var nodes = sequence
                 .Select(publicNode => (INode<T>)GetOrCreateNode(publicNode))
                 .ToList();
@@ -105,6 +100,8 @@ namespace Orc.DependencyGraph.GraphD
 
         public void AddSequences(IEnumerable<IEnumerable<T>> sequences)
         {
+            ArgumentNullException.ThrowIfNull(sequences);
+
             foreach (var sequence in sequences)
             {
                 AddSequence(sequence);
@@ -119,7 +116,10 @@ namespace Orc.DependencyGraph.GraphD
         {
             try
             {
-                foreach (var node in Sort()) ;
+                foreach (var node in Sort())
+                {
+                    ;
+                }
             }
             catch (TopologicalSortException)
             {
@@ -136,6 +136,8 @@ namespace Orc.DependencyGraph.GraphD
         /// <returns></returns>
         public bool CanSort(IEnumerable<T> sequence)
         {
+            ArgumentNullException.ThrowIfNull(sequence);
+
             var tempGraph = new Graph<T>(this);
             tempGraph.AddSequence(sequence);
             return tempGraph.CanSort();
@@ -179,12 +181,18 @@ namespace Orc.DependencyGraph.GraphD
 
             var getId = new Func<T, int>(node =>
             {
-                var nodeKey = node.ToString();
-                if (namesDictionary.ContainsKey(nodeKey)) return namesDictionary[nodeKey];
+                var nodeKey = node.ToString() ?? "Empty";
+                if (namesDictionary.ContainsKey(nodeKey))
+                {
+                    return namesDictionary[nodeKey];
+                }
+
                 var newId = namesDictionary.Count;
                 namesDictionary[nodeKey] = newId;
+
                 return newId;
             });
+
             // export Edges
             var sb = new StringBuilder();
             sb.AppendLine("From,To");
@@ -211,16 +219,15 @@ namespace Orc.DependencyGraph.GraphD
             sb1.Length--;
             sb1.Length--;
 
-            var propertiesPath = Path.Combine(Directory.GetParent(filePath).FullName, "Properties.csv");
+            var propertiesPath = Path.Combine(Directory.GetParent(filePath)?.FullName ?? string.Empty, "Properties.csv");
             File.WriteAllText(propertiesPath, sb1.ToString());
         }
-        #endregion
 
-        #region Methods
         private InternalNode<T> GetOrCreateNode(T publicNode)
         {
-            InternalNode<T> node;
-            if (!_nodes.TryGetValue(publicNode, out node))
+            ArgumentNullException.ThrowIfNull(publicNode);
+
+            if (!_nodes.TryGetValue(publicNode, out var node))
             {
                 node = new InternalNode<T>(publicNode, this);
                 _nodes.Add(publicNode, node);
@@ -231,15 +238,18 @@ namespace Orc.DependencyGraph.GraphD
 
         private void AddEdge(INode<T> source, INode<T> destination)
         {
+            ArgumentNullException.ThrowIfNull(source);
+            ArgumentNullException.ThrowIfNull(destination);
+
             var src = (InternalNode<T>)source;
             var dst = (InternalNode<T>)destination;
 
-            if (src.Edges.Count(_ => _ == dst) == 0)
+            if (!src.Edges.Any(edge => edge == dst))
             {
                 src.Edges.Add(dst);
             }
 
-            if (dst.Parents.Count(_ => _ == src) == 0)
+            if (!dst.Parents.Any(edge => edge == src))
             {
                 dst.Parents.Add(src); // try to move inside the previous if
             }
@@ -247,11 +257,14 @@ namespace Orc.DependencyGraph.GraphD
 
         private void ComputeLevels()
         {
-            if (!_isDirty) return;
+            if (!_isDirty)
+            {
+                return;
+            }
 
             // find the deepest node
             var orderedNodes = Sort();
-            var deepestNode = new InternalNode<T>(default(T), null) { ReferenceRelativeLevel = int.MinValue };
+            var deepestNode = orderedNodes.FirstOrDefault() as InternalNode<T> ?? throw new NotSupportedException($"Expecting type supporting implicit casting to type {typeof(InternalNodeFast<T>).GetSafeFullName()}");
             foreach (InternalNode<T> node in orderedNodes)
             {
                 node.ReferenceRelativeLevel = GetMaxLevel(node.Parents) + 1;
@@ -265,7 +278,7 @@ namespace Orc.DependencyGraph.GraphD
             ReferencePoint = 0;
 
             // go up and compute levels of parent nodes.
-            int minLevel = VisitRelations(referenceNode);
+            var minLevel = VisitRelations(referenceNode);
             ReferencePoint = minLevel * (-1);
             _countLevels = deepestNode.Level + 1;
             _isDirty = false;
@@ -273,7 +286,9 @@ namespace Orc.DependencyGraph.GraphD
 
         private int VisitRelations(InternalNode<T> startNode)
         {
-            int minLevel = int.MaxValue;
+            ArgumentNullException.ThrowIfNull(startNode);
+
+            var minLevel = int.MaxValue;
             var visitedNodes = new HashSet<InternalNode<T>>();
             var stack = new Stack<InternalNode<T>>();
             stack.Push(startNode);
@@ -312,6 +327,8 @@ namespace Orc.DependencyGraph.GraphD
 
         private static int GetMaxLevel(List<InternalNode<T>> internalNodes)
         {
+            ArgumentNullException.ThrowIfNull(internalNodes);
+
             if (internalNodes.Count == 0)
             {
                 return -1;
@@ -320,12 +337,12 @@ namespace Orc.DependencyGraph.GraphD
             return internalNodes.Max(_ => _.ReferenceRelativeLevel);
         }
 
-        private IEnumerable<INode<T>> GetNodes(INode<T> startNode, Func<IInternalNode<T>, bool> predicate)
+        private IEnumerable<INode<T>> GetNodes(IInternalNode<T> startNode, Func<IInternalNode<T>, bool> predicate)
         {
             ComputeLevels();
             var visitedNodes = new HashSet<IInternalNode<T>>();
             var stack = new Stack<IInternalNode<T>>();
-            stack.Push(startNode as IInternalNode<T>);
+            stack.Push(startNode);
             while (stack.Count != 0)
             {
                 var node = stack.Pop();
@@ -448,9 +465,7 @@ namespace Orc.DependencyGraph.GraphD
                 throw new TopologicalSortException("Topological sort failed due to loops in the graph");
             }
         }
-        #endregion
 
-        #region TestHelpers
         // may be I need to move this to a partial class?
 
         IEnumerable<IInternalNode<T>[]> IInternalGraph<T>.Edges
@@ -485,6 +500,5 @@ namespace Orc.DependencyGraph.GraphD
         {
             get { return _nodes.Values; }
         }
-        #endregion
     }
 }

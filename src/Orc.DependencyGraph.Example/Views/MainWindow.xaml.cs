@@ -1,12 +1,6 @@
-// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="MainWindow.xaml.cs" company="WildGums">
-//   Copyright (c) 2008 - 2017 WildGums. All rights reserved.
-// </copyright>
-// --------------------------------------------------------------------------------------------------------------------
-
 namespace Orc.DependencyGraph.Views
 {
-    public partial class MainWindow 
+    public partial class MainWindow
     {
         #region Constructors
         public MainWindow()

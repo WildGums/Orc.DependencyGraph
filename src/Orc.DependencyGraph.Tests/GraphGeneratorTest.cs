@@ -1,11 +1,4 @@
-﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="GraphGeneratorTest.cs" company="WildGums">
-//   Copyright (c) 2008 - 2017 WildGums. All rights reserved.
-// </copyright>
-// --------------------------------------------------------------------------------------------------------------------
-
-
-namespace Orc.DependencyGraph.Tests
+﻿namespace Orc.DependencyGraph.Tests
 {
     using System;
     using System.Linq;
@@ -23,7 +16,7 @@ namespace Orc.DependencyGraph.Tests
         [TestCase(14, 3, 2, 4)]
         public void CalculateNodeCount(int nodes, int levels, int descendants, int precedents)
         {
-            Assert.AreEqual(nodes, GraphGenerator.CalculateNodeCount(levels, descendants, precedents));
+            Assert.That(GraphGenerator.CalculateNodeCount(levels, descendants, precedents), Is.EqualTo(nodes));
         }
 
         [TestCase(8, 0, 3, 2, 4)]
@@ -31,7 +24,7 @@ namespace Orc.DependencyGraph.Tests
         [TestCase(2, 2, 3, 2, 4)]
         public void NodesOnLevel(int nodes, int level, int levels, int descendants, int precedents)
         {
-            Assert.AreEqual(nodes, GraphGenerator.NodesOnLevel(level, levels, descendants, precedents));
+            Assert.That(GraphGenerator.NodesOnLevel(level, levels, descendants, precedents), Is.EqualTo(nodes));
         }
 
         [TestCase(10, 10, 1, 1)]
@@ -44,10 +37,9 @@ namespace Orc.DependencyGraph.Tests
             int expectedNodeCount, int levels, int descendants, int precedents)
         {
             var target = GraphGenerator.GenerateGraph(levels, descendants, precedents);
-            Assert.AreEqual(expectedNodeCount, target.CountNodes,
-                "Graph expected to have {0} nodes but has {1}", expectedNodeCount, target.CountNodes);
-            this.AssertEveryNodeHasNDescendants(target, descendants);
-            this.AssertEveryNodeHasNPrecedents(target, precedents);
+            Assert.That(target.CountNodes, Is.EqualTo(expectedNodeCount), $"Graph expected to have {expectedNodeCount} nodes but has {target.CountNodes}");
+            AssertEveryNodeHasNDescendants(target, descendants);
+            AssertEveryNodeHasNPrecedents(target, precedents);
         }
 
         private void AssertEveryNodeHasNDescendants(IGraph<int> graph, int expectedDescendantCount)
@@ -55,9 +47,12 @@ namespace Orc.DependencyGraph.Tests
             foreach (var node in graph.Nodes)
             {
                 var descendentCount = node.ImmediateDescendants.Count();
-                if (descendentCount == 0) continue; // skip leafs
-                Assert.AreEqual(expectedDescendantCount, descendentCount,
-                    "Number of descendants in the node expected to be {0} but is {1}", expectedDescendantCount, descendentCount);
+                if (descendentCount == 0)
+                {
+                    continue; // skip leafs
+                }
+
+                Assert.That(descendentCount, Is.EqualTo(expectedDescendantCount), $"Number of descendants in the node expected to be {expectedDescendantCount} but is {descendentCount}");
             }
         }
 
@@ -66,9 +61,12 @@ namespace Orc.DependencyGraph.Tests
             foreach (var node in graph.Nodes)
             {
                 var precedentsCount = node.ImmediatePrecedents.Count();
-                if (precedentsCount == 0) continue; // skip roots
-                Assert.AreEqual(expectedPrecedentsCount, precedentsCount,
-                    "Number of precedents in the node expected to be {0} but is {1}", expectedPrecedentsCount, precedentsCount);
+                if (precedentsCount == 0)
+                {
+                    continue; // skip roots
+                }
+
+                Assert.That(precedentsCount, Is.EqualTo(expectedPrecedentsCount), $"Number of precedents in the node expected to be {expectedPrecedentsCount} but is {precedentsCount}");
             }
         }
 

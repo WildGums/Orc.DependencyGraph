@@ -1,20 +1,13 @@
-﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="GraphTestHelper.cs" company="WildGums">
-//   Copyright (c) 2008 - 2017 WildGums. All rights reserved.
-// </copyright>
-// --------------------------------------------------------------------------------------------------------------------
-
-namespace Orc.DependencyGraph.Tests
+﻿namespace Orc.DependencyGraph.Tests
 {
     using System;
     using System.Collections.Generic;
     using System.Linq;
     using NUnit.Framework;
-    using Orc.DependencyGraph;
+    using DependencyGraph;
 
     internal static class GraphTestHelper
     {
-        #region Methods
         public static IGraph<int> CreateExampleGraph(Type type)
         {
             var graph = CreateEmptyGraph(type);
@@ -57,6 +50,8 @@ namespace Orc.DependencyGraph.Tests
             // - parents of node 51 are on different levels
             var graph = CreateExampleGraph(type);
 
+            Assert.That(graph, Is.Not.Null);
+
             graph.AddSequences(new[]
             {
             new[] {31, 51},
@@ -67,6 +62,9 @@ namespace Orc.DependencyGraph.Tests
         public static IGraph<int> CreateSimpleGraph(Type type)
         {
             var graph = CreateEmptyGraph(type);
+
+            Assert.That(graph, Is.Not.Null);
+
             graph.AddSequences(new[]
             {
             new[] {41, 51, 61, 100},
@@ -79,10 +77,10 @@ namespace Orc.DependencyGraph.Tests
         {
             foreach (var sequence in sequences)
             {
-                for (int index = 0; index < sequence.Length - 1; index++)
+                for (var index = 0; index < sequence.Length - 1; index++)
                 {
                     var node = graph.Find(sequence[index]);
-                    Assert.AreEqual(1, node.ImmediateDescendants.Count(x => x.Value == sequence[index + 1]));
+                    Assert.That(node?.ImmediateDescendants.Count(x => x.Value == sequence[index + 1]), Is.EqualTo(1));
                 }
             }
         }
@@ -91,56 +89,64 @@ namespace Orc.DependencyGraph.Tests
         {
             foreach (var sequence in sequences)
             {
-                for (int index = 0; index < sequence.Length - 1; index++)
+                for (var index = 0; index < sequence.Length - 1; index++)
                 {
                     var node = graph.Find(sequence[index]);
-                    Assert.AreEqual(1, node.ImmediatePrecedents.Count(x => x.Value == sequence[index + 1]));
+                    Assert.That(node?.ImmediatePrecedents.Count(x => x.Value == sequence[index + 1]), Is.EqualTo(1));
                 }
             }
         }
 
         public static void AssertContainsSequence(int[][] sequences, INode<int>[] edge)
         {
-            Assert.AreEqual(1, sequences.Count(_ => _[0] == edge[0].Value && _[1] == edge[1].Value),
-                "Edge does not contain a sequence {0}-{1}", edge[0].Value, edge[1].Value);
+            Assert.That(sequences.Count(_ => _[0] == edge[0].Value && _[1] == edge[1].Value), Is.EqualTo(1), $"Edge does not contain a sequence {edge[0].Value}-{edge[1].Value}");
         }
 
         public static void AssertContainsBackSequence(int[][] sequences, INode<int>[] edge)
         {
-            Assert.AreEqual(1, sequences.Count(_ => _[0] == edge[0].Value && _[1] == edge[1].Value),
-                "Edge does not contain a back sequence {0}-{1}", edge[0].Value, edge[1].Value);
+            Assert.That(sequences.Count(_ => _[0] == edge[0].Value && _[1] == edge[1].Value), Is.EqualTo(1), $"Edge does not contain a back sequence {edge[0].Value}-{edge[1].Value}");
         }
 
-        public static void AssertCollectionsConsistsOfNodes(ICollection<int> expectedNodes, IEnumerable<INode<int>> nodes)
+        public static void AssertCollectionsConsistsOfNodes(ICollection<int>? expectedNodes, IEnumerable<INode<int>>? nodes)
         {
+            ArgumentNullException.ThrowIfNull(expectedNodes);
+            ArgumentNullException.ThrowIfNull(nodes);
+
             var count = 0;
 
             foreach (var node in nodes)
             {
-                Assert.IsTrue(expectedNodes.Contains(node.Value), "Expected result does not contain node {0}", node.Value);
+                Assert.That(expectedNodes.Contains(node.Value), Is.True, $"Expected result does not contain node {node.Value}");
                 count++;
             }
-            Assert.AreEqual(expectedNodes.Count, count, "Node count expected to be {0}, but was {1}", expectedNodes.Count, count);
+            Assert.That(count, Is.EqualTo(expectedNodes.Count), $"Node count expected to be {expectedNodes.Count}, but was {count}");
         }
 
-        public static void AssertNodesAreOrderedByLevel(IEnumerable<INode<int>> orderedNodes)
+        public static void AssertNodesAreOrderedByLevel(IEnumerable<INode<int>>? orderedNodes)
         {
+            ArgumentNullException.ThrowIfNull(orderedNodes);
+
             var lastLevel = int.MinValue;
             foreach (var node in orderedNodes)
             {
                 if (node.Level >= lastLevel)
+                {
                     lastLevel = node.Level;
+                }
                 else
+                {
                     Assert.Fail("Order of nodes is not correct");
+                }
             }
         }
 
         public static IGraph<int> CreateEmptyGraph(Type type)
         {
             var instance = Activator.CreateInstance(type) as IGraph<int>;
+
+            Assert.That(instance, Is.Not.Null);
+
             return instance;
         }
-        #endregion
     }
-
 }

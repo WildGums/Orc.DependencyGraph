@@ -1,11 +1,4 @@
-// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="OrderedEnumerable.cs" company="WildGums">
-//   Copyright (c) 2008 - 2018 WildGums. All rights reserved.
-// </copyright>
-// --------------------------------------------------------------------------------------------------------------------
-
-
-namespace Orc.DependencyGraph
+﻿namespace Orc.DependencyGraph
 {
     using System;
     using System.Collections;
@@ -14,20 +7,19 @@ namespace Orc.DependencyGraph
 
     internal class OrderedEnumerable<T> : IOrderedEnumerable<T>
     {
-        #region Fields
         private readonly Func<IEnumerable<T>> _enumerator;
-        #endregion
 
-        #region Constructors
         public OrderedEnumerable(Func<IEnumerable<T>> enumerator)
         {
+            ArgumentNullException.ThrowIfNull(enumerator);
+
             _enumerator = enumerator;
         }
-        #endregion
 
-        #region IOrderedEnumerable<T> Members
-        public IOrderedEnumerable<T> CreateOrderedEnumerable<TKey>(Func<T, TKey> keySelector, IComparer<TKey> comparer, bool @descending)
+        public IOrderedEnumerable<T> CreateOrderedEnumerable<TKey>(Func<T, TKey> keySelector, IComparer<TKey>? comparer, bool @descending)
         {
+            ArgumentNullException.ThrowIfNull(keySelector);
+
             throw new NotImplementedException();
         }
 
@@ -41,6 +33,5 @@ namespace Orc.DependencyGraph
         {
             return GetEnumerator();
         }
-        #endregion
     }
 }

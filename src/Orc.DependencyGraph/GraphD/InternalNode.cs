@@ -1,11 +1,4 @@
-﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="InternalNode.cs" company="WildGums">
-//   Copyright (c) 2008 - 2017 WildGums. All rights reserved.
-// </copyright>
-// --------------------------------------------------------------------------------------------------------------------
-
-
-namespace Orc.DependencyGraph.GraphD
+﻿namespace Orc.DependencyGraph.GraphD
 {
     using System;
     using System.Collections.Generic;
@@ -14,25 +7,23 @@ namespace Orc.DependencyGraph.GraphD
     using System.Text;
 
     [DebuggerDisplay("{Value.ToString()}: [{(this as IInternalNode<T>).PrintImmediatePrecedents}]")]
-    internal class InternalNode<T> : IInternalNode<T> 
+    internal class InternalNode<T> : IInternalNode<T>
         where T : IEquatable<T>
     {
-        #region Fields
         private readonly Graph<T> _graph;
-        #endregion
 
-        #region Constructors
         internal InternalNode(T publicNode, Graph<T> graph)
         {
+            ArgumentNullException.ThrowIfNull(publicNode);
+            ArgumentNullException.ThrowIfNull(graph);
+
             Edges = new List<InternalNode<T>>();
             Parents = new List<InternalNode<T>>();
 
             Value = publicNode;
             _graph = graph;
         }
-        #endregion
 
-        #region Properties
         public List<InternalNode<T>> Edges { get; private set; }
         public List<InternalNode<T>> Parents { get; private set; }
 
@@ -113,16 +104,12 @@ namespace Orc.DependencyGraph.GraphD
                 return sb.Remove(sb.Length - 2, 2).ToString();
             }
         }
-        #endregion
 
-        #region IInternalNode<T> Members
         public IOrderedEnumerable<INode<T>> GetNeighbours(int relativeLevelFrom, int relativeLevelTo)
         {
             return new OrderedEnumerable<INode<T>>(() => GetNeighboursInternal(relativeLevelFrom, relativeLevelTo));
         }
-        #endregion
 
-        #region Methods
         private IEnumerable<INode<T>> GetNeighboursInternal(int relativeLevelFrom, int relativeLevelTo)
         {
             if (relativeLevelFrom < 0 && relativeLevelTo < 0)
@@ -140,6 +127,5 @@ namespace Orc.DependencyGraph.GraphD
 
             return precedents.Union(descendants).OrderBy(_ => _.Level);
         }
-        #endregion
     }
 }

@@ -1,33 +1,22 @@
-﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="GraphFast.cs" company="WildGums">
-//   Copyright (c) 2008 - 2017 WildGums. All rights reserved.
-// </copyright>
-// --------------------------------------------------------------------------------------------------------------------
-
-
-namespace Orc.DependencyGraph.GraphD
+﻿namespace Orc.DependencyGraph.GraphD
 {
     using System;
     using System.Collections.Generic;
     using System.IO;
     using System.Linq;
     using System.Text;
+    using Catel.Reflection;
 
-    public class GraphFast<T>
-        : IInternalGraph<T> where T : IEquatable<T>
+    public class GraphFast<T> : IInternalGraph<T> 
+        where T : IEquatable<T>
     {
-        #region Constants
         private const int DefaultCapacity = 4;
-        #endregion
 
-        #region Fields
         private readonly Dictionary<T, InternalNodeFast<T>> _nodes;
 
         private int _countLevels;
         private bool _isDirty = false;
-        #endregion
 
-        #region Constructors
         public GraphFast(int capacity)
         {
             _nodes = new Dictionary<T, InternalNodeFast<T>>(capacity);
@@ -47,6 +36,8 @@ namespace Orc.DependencyGraph.GraphD
         public GraphFast(IEnumerable<IEnumerable<T>> initialSequences)
             : this()
         {
+            ArgumentNullException.ThrowIfNull(initialSequences);
+
             AddSequences(initialSequences);
         }
 
@@ -57,8 +48,12 @@ namespace Orc.DependencyGraph.GraphD
         private GraphFast(GraphFast<T> initialGraph)
             : this(initialGraph.CountNodes)
         {
+            ArgumentNullException.ThrowIfNull(initialGraph);
+
             if (initialGraph._isDirty)
+            {
                 initialGraph.ReinitializeKeys();
+            }
 
             var nodeKeys = new InternalNodeFast<T>[initialGraph.CountNodes];
             foreach (var node in initialGraph._nodes)
@@ -75,9 +70,7 @@ namespace Orc.DependencyGraph.GraphD
                 }
             }
         }
-        #endregion
 
-        #region Properties
         public int CountNodes
         {
             get { return _nodes.Count; }
@@ -93,9 +86,7 @@ namespace Orc.DependencyGraph.GraphD
         }
 
         public int ReferencePoint { get; private set; }
-        #endregion
 
-        #region IInternalGraph<T> Members
         IInternalNode<T> IInternalGraph<T>.GetOrCreateNode(T publicNode)
         {
             return GetOrCreateNode(publicNode);
@@ -103,11 +94,15 @@ namespace Orc.DependencyGraph.GraphD
 
         public INode<T> Find(T node)
         {
+            ArgumentNullException.ThrowIfNull(node);
+
             return _nodes[node];
         }
 
         public void AddSequence(IEnumerable<T> sequence)
         {
+            ArgumentNullException.ThrowIfNull(sequence);
+
             var nodes = sequence
                 .Select(publicNode => GetOrCreateNode(publicNode))
                 .ToArray();
@@ -122,6 +117,8 @@ namespace Orc.DependencyGraph.GraphD
 
         public void AddSequences(IEnumerable<IEnumerable<T>> sequences)
         {
+            ArgumentNullException.ThrowIfNull(sequences);
+
             foreach (var sequence in sequences)
             {
                 AddSequence(sequence);
@@ -136,7 +133,10 @@ namespace Orc.DependencyGraph.GraphD
         {
             try
             {
-                foreach (var node in Sort()) ;
+                foreach (var node in Sort())
+                {
+                    ;
+                }
             }
             catch (TopologicalSortException)
             {
@@ -153,6 +153,8 @@ namespace Orc.DependencyGraph.GraphD
         /// <returns></returns>
         public bool CanSort(IEnumerable<T> sequence)
         {
+            ArgumentNullException.ThrowIfNull(sequence);
+
             var tempGraph = new GraphFast<T>(this);
             tempGraph.AddSequence(sequence);
             return tempGraph.CanSort();
@@ -202,13 +204,10 @@ namespace Orc.DependencyGraph.GraphD
 
             File.WriteAllText(filePath, sb.ToString());
         }
-        #endregion
 
-        #region Methods
         private InternalNodeFast<T> GetOrCreateNode(T publicNode)
         {
-            InternalNodeFast<T> node;
-            if (!_nodes.TryGetValue(publicNode, out node))
+            if (!_nodes.TryGetValue(publicNode, out var node))
             {
                 node = new InternalNodeFast<T>(publicNode, this);
                 _nodes.Add(publicNode, node);
@@ -219,15 +218,15 @@ namespace Orc.DependencyGraph.GraphD
 
         private void AddEdge(InternalNodeFast<T> source, InternalNodeFast<T> destination)
         {
-            if (source.Edges.Count(_ => _ == destination) == 0)
+            if (!source.Edges.Any(edge => edge == destination))
             {
                 source.Edges.Add(destination);
             }
 
-            if (destination.Parents.Count(_ => _ == source) == 0)
+            if (!destination.Parents.Any(parent => parent == source))
             {
                 destination.Parents.Add(source); // try to move inside the previous if
-}
+            }
         }
 
         private void ComputeLevels()
@@ -241,7 +240,8 @@ namespace Orc.DependencyGraph.GraphD
 
             // find the deepest node
             var orderedNodes = Sort();
-            var deepestNode = new InternalNodeFast<T>(default(T), null) {ReferenceRelativeLevel = int.MinValue};
+            var deepestNode = orderedNodes.FirstOrDefault() as InternalNodeFast<T> ?? throw new NotSupportedException($"Expecting type supporting implicit casting to type {typeof(InternalNodeFast<T>).GetSafeFullName()}");
+
             foreach (InternalNodeFast<T> node in orderedNodes)
             {
                 node.ReferenceRelativeLevel = GetMaxLevel(node.Parents) + 1;
@@ -255,7 +255,7 @@ namespace Orc.DependencyGraph.GraphD
             ReferencePoint = 0;
 
             // go up and compute levels of parent nodes.
-            int minLevel = VisitRelations(referenceNode);
+            var minLevel = VisitRelations(referenceNode);
             ReferencePoint = minLevel * (-1);
             _countLevels = deepestNode.Level + 1;
             _isDirty = false;
@@ -272,7 +272,7 @@ namespace Orc.DependencyGraph.GraphD
 
         private int VisitRelations(InternalNodeFast<T> startNode)
         {
-            int minLevel = int.MaxValue;
+            var minLevel = int.MaxValue;
             var stack = new Stack<InternalNodeFast<T>>();
             var visitedNodes = new bool[_nodes.Count];
             stack.Push(startNode);
@@ -327,12 +327,14 @@ namespace Orc.DependencyGraph.GraphD
             return GetNodes(_nodes.Values.First(), (_ => _.Level == level));
         }
 
-        private IEnumerable<INode<T>> GetNodes(INode<T> startNode, Func<IInternalNode<T>, bool> predicate)
+        private IEnumerable<INode<T>> GetNodes(InternalNodeFast<T> startNode, Func<IInternalNode<T>, bool> predicate)
         {
             ComputeLevels();
+
             var stack = new Stack<InternalNodeFast<T>>();
             var visitedNodes = new bool[_nodes.Count];
-            stack.Push(startNode as InternalNodeFast<T>);
+            stack.Push(startNode);
+
             while (stack.Count != 0)
             {
                 var node = stack.Pop();
@@ -348,34 +350,19 @@ namespace Orc.DependencyGraph.GraphD
                     yield return node;
                 }
 
-                foreach (var parent in node.Parents)
-                {
-                    if (visitedNodes[parent.Key])
-                    {
-                        continue;
-                    }
-
-                    stack.Push(parent);
-                }
-
-                foreach (var child in node.Edges)
-                {
-                    if (visitedNodes[child.Key])
-                    {
-                        continue;
-                    }
-
-                    stack.Push(child);
-                }
+                stack.PushUnvisited(node.Parents, node => visitedNodes[node.Key]);
+                stack.PushUnvisited(node.Edges, node => visitedNodes[node.Key]);
             }
         }
 
-        internal IEnumerable<INode<T>> GetPrecedents(IInternalNode<T> startNode, Func<IInternalNode<T>, bool> predicate)
+        internal IEnumerable<INode<T>> GetPrecedents(InternalNodeFast<T> startNode, Func<IInternalNode<T>, bool> predicate)
         {
             ComputeLevels();
+
             var visitedNodes = new bool[_nodes.Count];
             var stack = new Stack<InternalNodeFast<T>>();
-            stack.Push(startNode as InternalNodeFast<T>);
+            stack.Push(startNode);
+
             while (stack.Count != 0)
             {
                 var node = stack.Pop();
@@ -385,24 +372,18 @@ namespace Orc.DependencyGraph.GraphD
                     yield return node;
                 }
 
-                foreach (var parent in node.Parents)
-                {
-                    if (visitedNodes[parent.Key])
-                    {
-                        continue;
-                    }
-
-                    stack.Push(parent);
-                }
+                stack.PushUnvisited(node.Parents, node => visitedNodes[node.Key]);
             }
         }
 
-        internal IEnumerable<INode<T>> GetDescendants(IInternalNode<T> startNode, Func<IInternalNode<T>, bool> predicate)
+        internal IEnumerable<INode<T>> GetDescendants(InternalNodeFast<T> startNode, Func<IInternalNode<T>, bool> predicate)
         {
             ComputeLevels();
+
             var visitedNodes = new bool[_nodes.Count];
             var stack = new Stack<InternalNodeFast<T>>();
-            stack.Push(startNode as InternalNodeFast<T>);
+            stack.Push(startNode);
+
             while (stack.Count != 0)
             {
                 var node = stack.Pop();
@@ -413,15 +394,7 @@ namespace Orc.DependencyGraph.GraphD
                     yield return node;
                 }
 
-                foreach (var child in node.Edges)
-                {
-                    if (visitedNodes[child.Key])
-                    {
-                        continue;
-                    }
-
-                    stack.Push(child);
-                }
+                stack.PushUnvisited(node.Edges, node => visitedNodes[node.Key]);
             }
         }
 
@@ -466,9 +439,7 @@ namespace Orc.DependencyGraph.GraphD
                 throw new TopologicalSortException("Topological sort failed due to loops in the graph");
             }
         }
-        #endregion
 
-        #region TestHelpers
         IEnumerable<IInternalNode<T>[]> IInternalGraph<T>.Edges
         {
             get
@@ -477,7 +448,7 @@ namespace Orc.DependencyGraph.GraphD
                 {
                     foreach (var child in node.Edges)
                     {
-                        yield return new[] {node, child};
+                        yield return new[] { node, child };
                     }
                 }
             }
@@ -491,7 +462,7 @@ namespace Orc.DependencyGraph.GraphD
                 {
                     foreach (var parent in node.Parents)
                     {
-                        yield return new[] {node, parent}; // Attention: the order is opposite!
+                        yield return new[] { node, parent }; // Attention: the order is opposite!
                     }
                 }
             }
@@ -501,6 +472,5 @@ namespace Orc.DependencyGraph.GraphD
         {
             get { return _nodes.Values; }
         }
-        #endregion
     }
 }

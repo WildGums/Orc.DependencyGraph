@@ -1,11 +1,4 @@
-﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="IGraph.cs" company="WildGums">
-//   Copyright (c) 2008 - 2017 WildGums. All rights reserved.
-// </copyright>
-// --------------------------------------------------------------------------------------------------------------------
-
-
-namespace Orc.DependencyGraph
+﻿namespace Orc.DependencyGraph
 {
     using System;
     using System.Collections.Generic;
@@ -14,7 +7,6 @@ namespace Orc.DependencyGraph
     public interface IGraph<T>
         where T : IEquatable<T>
     {
-        #region Properties
         /// <summary>
         /// Returns all nodes of the graph
         /// </summary>
@@ -29,15 +21,13 @@ namespace Orc.DependencyGraph
         /// Gets the number of levels contained in the Graph
         /// </summary>
         int CountLevels { get; }
-        #endregion
 
-        #region Methods
         /// <summary>
         /// Finds a specific node within a graph by a value
         /// </summary>
         /// <param name="value">The value of node to search</param>
         /// <returns>The node associated with the specified value</returns>
-        INode<T> Find(T value);
+        INode<T>? Find(T value);
 
         /// <summary>
         /// Adds a sequence to the graph
@@ -107,6 +97,5 @@ namespace Orc.DependencyGraph
         /// Returns nodes on the last level of the Graph
         /// </summary>
         IEnumerable<INode<T>> GetLeafNodes();
-        #endregion
     }
 }
