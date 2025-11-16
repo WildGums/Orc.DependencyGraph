@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFrameworks>net8.0-windows</TargetFrameworks>
+    <TargetFrameworks>net10.0-windows</TargetFrameworks>
     <AssemblyName>Orc.DependencyGraph.Tests</AssemblyName>
     <RootNamespace>Orc.DependencyGraph.Tests</RootNamespace>
     <DefaultLanguage>en-US</DefaultLanguage>
