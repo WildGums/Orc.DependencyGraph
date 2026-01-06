@@ -144,12 +144,15 @@ namespace Orc.DependencyGraph
         T Value { get; }
         System.Linq.IOrderedEnumerable<Orc.DependencyGraph.INode<T>> GetNeighbours(int relativeLevelFrom, int relativeLevelTo);
     }
-    public static class OrcDependencyGraphModule
-    {
-        public static Microsoft.Extensions.DependencyInjection.IServiceCollection AddOrcDependencyGraph(this Microsoft.Extensions.DependencyInjection.IServiceCollection serviceCollection) { }
-    }
     public class TopologicalSortException : System.Exception
     {
         public TopologicalSortException(string exceptionMessage) { }
+    }
+}
+namespace Orc
+{
+    public static class OrcDependencyGraphModule
+    {
+        public static Microsoft.Extensions.DependencyInjection.IServiceCollection AddOrcDependencyGraph(this Microsoft.Extensions.DependencyInjection.IServiceCollection serviceCollection) { }
     }
 }
