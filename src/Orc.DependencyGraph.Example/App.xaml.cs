@@ -8,13 +8,7 @@
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.Hosting;
     using Microsoft.Extensions.Logging;
-    using Orc.Automation;
-    using Orc.Controls;
     using Orc.DependencyGraph.Views;
-    using Orc.FileSystem;
-    using Orc.Serialization.Json;
-    using Orc.SystemInfo;
-    using Orc.Theming;
     using Orchestra;
 
     /// <summary>
