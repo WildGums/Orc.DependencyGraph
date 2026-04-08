@@ -1,6 +1,5 @@
-﻿namespace Orc.DependencyGraph.Views
+﻿namespace Orc.DependencyGraph.Views;
+
+public partial class MainWindow
 {
-    public partial class MainWindow
-    {
-    }
 }

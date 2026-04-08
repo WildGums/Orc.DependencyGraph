@@ -1,176 +1,175 @@
-﻿namespace Orc.DependencyGraph
+﻿namespace Orc.DependencyGraph;
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using GraphD;
+using Node = GraphD.IInternalNode<int>;
+
+internal static class GraphGenerator
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using GraphD;
-    using Node = GraphD.IInternalNode<int>;
-
-    internal static class GraphGenerator
+    public static IGraph<int> GenerateGraph(int levels, int descendants, int precedents)
     {
-        public static IGraph<int> GenerateGraph(int levels, int descendants, int precedents)
+        var graph = new Graph<int>();
+        FillGraph(graph, levels, descendants, precedents);
+        return graph;
+    }
+
+    public static void FillGraph(IGraph<int> graph, int levels, int descendants, int precedents)
+    {
+        ArgumentNullException.ThrowIfNull(graph);
+
+        var nodes = new Dictionary<int, QueueElement>();
+        ValidateParameters(descendants, precedents);
+
+        var parentQueue = new Queue<QueueElement>();
+        var childrenQueue = new LinkedList<QueueElement>();
+        var rootNodeCount = NodesOnLevel(0, levels, descendants, precedents);
+        for (var i = 0; i < rootNodeCount; i++) // add root's
         {
-            var graph = new Graph<int>();
-            FillGraph(graph, levels, descendants, precedents);
-            return graph;
+            EnqueueParent(parentQueue, GetOrCreateNode(nodes, nodes.Count));
         }
 
-        public static void FillGraph(IGraph<int> graph, int levels, int descendants, int precedents)
+        var nodeCount = CalculateNodeCount(levels, descendants, precedents);
+        while (graph.CountNodes < nodeCount || childrenQueue.Count != 0)
         {
-            ArgumentNullException.ThrowIfNull(graph);
-
-            var nodes = new Dictionary<int, QueueElement>();
-            ValidateParameters(descendants, precedents);
-
-            var parentQueue = new Queue<QueueElement>();
-            var childrenQueue = new LinkedList<QueueElement>();
-            var rootNodeCount = NodesOnLevel(0, levels, descendants, precedents);
-            for (var i = 0; i < rootNodeCount; i++) // add root's
+            var parent = DequeueFreeParent(parentQueue, descendants);
+            var nextChildNode = DequeueFreeChild(childrenQueue, parent, precedents);
+            if (nextChildNode is null)
             {
-                EnqueueParent(parentQueue, GetOrCreateNode(nodes, nodes.Count));
+                nextChildNode = GetOrCreateNode(nodes, nodes.Count);
+                EnqueueParent(parentQueue, nextChildNode);
+                EnqueueChild(childrenQueue, nextChildNode, precedents);
             }
 
-            var nodeCount = CalculateNodeCount(levels, descendants, precedents);
-            while (graph.CountNodes < nodeCount || childrenQueue.Count != 0)
-            {
-                var parent = DequeueFreeParent(parentQueue, descendants);
-                var nextChildNode = DequeueFreeChild(childrenQueue, parent, precedents);
-                if (nextChildNode is null)
-                {
-                    nextChildNode = GetOrCreateNode(nodes, nodes.Count);
-                    EnqueueParent(parentQueue, nextChildNode);
-                    EnqueueChild(childrenQueue, nextChildNode, precedents);
-                }
+            parent.Edges.Add(nextChildNode.Node);
 
-                parent.Edges.Add(nextChildNode.Node);
+            graph.AddSequence(new[] { parent.Node, nextChildNode.Node });
+        }
+    }
 
-                graph.AddSequence(new[] { parent.Node, nextChildNode.Node });
-            }
+    private static void EnqueueParent(Queue<QueueElement> parentQueue, QueueElement nextChildNode)
+    {
+        ArgumentNullException.ThrowIfNull(parentQueue);
+        ArgumentNullException.ThrowIfNull(nextChildNode);
+
+        parentQueue.Enqueue(nextChildNode);
+    }
+
+    private static QueueElement DequeueFreeParent(Queue<QueueElement> parentQueue, int descendants)
+    {
+        ArgumentNullException.ThrowIfNull(parentQueue);
+
+        var freeParent = parentQueue.Peek();
+        if (++freeParent.DescendantCount == descendants)
+        {
+            parentQueue.Dequeue();
         }
 
-        private static void EnqueueParent(Queue<QueueElement> parentQueue, QueueElement nextChildNode)
-        {
-            ArgumentNullException.ThrowIfNull(parentQueue);
-            ArgumentNullException.ThrowIfNull(nextChildNode);
+        return freeParent;
+    }
 
-            parentQueue.Enqueue(nextChildNode);
+    private static void EnqueueChild(LinkedList<QueueElement> childrenQueue, QueueElement nextChildNode, int precedents)
+    {
+        ArgumentNullException.ThrowIfNull(childrenQueue);
+        ArgumentNullException.ThrowIfNull(nextChildNode);
+
+        if (precedents > 1)
+        {
+            nextChildNode.PrecedentCount = 1;
+            childrenQueue.AddLast(nextChildNode);
+        }
+    }
+
+    private static QueueElement? DequeueFreeChild(LinkedList<QueueElement> childrenQueue, QueueElement parentNode, int precedents)
+    {
+        ArgumentNullException.ThrowIfNull(childrenQueue);
+        ArgumentNullException.ThrowIfNull(parentNode);
+
+        var freeChild = childrenQueue.FirstOrDefault(childNode => !parentNode.Edges.Any(node => node == childNode.Node));
+        if (freeChild is null)
+        {
+            return null;
         }
 
-        private static QueueElement DequeueFreeParent(Queue<QueueElement> parentQueue, int descendants)
+        if (++freeChild.PrecedentCount == precedents)
         {
-            ArgumentNullException.ThrowIfNull(parentQueue);
-
-            var freeParent = parentQueue.Peek();
-            if (++freeParent.DescendantCount == descendants)
-            {
-                parentQueue.Dequeue();
-            }
-
-            return freeParent;
+            childrenQueue.Remove(freeChild);
         }
 
-        private static void EnqueueChild(LinkedList<QueueElement> childrenQueue, QueueElement nextChildNode, int precedents)
-        {
-            ArgumentNullException.ThrowIfNull(childrenQueue);
-            ArgumentNullException.ThrowIfNull(nextChildNode);
+        return freeChild;
+    }
 
-            if (precedents > 1)
-            {
-                nextChildNode.PrecedentCount = 1;
-                childrenQueue.AddLast(nextChildNode);
-            }
+    internal static int CalculateNodeCount(int levels, int descendants, int precendents)
+    {
+        var min = Math.Min(descendants, precendents);
+        var max = Math.Max(descendants, precendents);
+        if (max % min != 0)
+        {
+            throw new ArgumentException();
         }
 
-        private static QueueElement? DequeueFreeChild(LinkedList<QueueElement> childrenQueue, QueueElement parentNode, int precedents)
+        var growth = max / min;
+        var result = 0;
+        var nodesOnLevel = new Func<int, int>(level => { return (int)(min * Math.Pow(growth, levels - level - 1)); });
+        for (var i = 0; i < levels; i++)
         {
-            ArgumentNullException.ThrowIfNull(childrenQueue);
-            ArgumentNullException.ThrowIfNull(parentNode);
-
-            var freeChild = childrenQueue.FirstOrDefault(childNode => !parentNode.Edges.Any(node => node == childNode.Node));
-            if (freeChild is null)
-            {
-                return null;
-            }
-
-            if (++freeChild.PrecedentCount == precedents)
-            {
-                childrenQueue.Remove(freeChild);
-            }
-
-            return freeChild;
+            result += nodesOnLevel(i);
         }
 
-        internal static int CalculateNodeCount(int levels, int descendants, int precendents)
+        return result;
+    }
+
+    internal static int NodesOnLevel(int level, int levels, int descendants, int precendents)
+    {
+        var min = Math.Min(descendants, precendents);
+        var max = Math.Max(descendants, precendents);
+        var growth = max / min;
+        if (descendants > precendents)
         {
-            var min = Math.Min(descendants, precendents);
-            var max = Math.Max(descendants, precendents);
-            if (max % min != 0)
-            {
-                throw new ArgumentException();
-            }
-
-            var growth = max / min;
-            var result = 0;
-            var nodesOnLevel = new Func<int, int>(level => { return (int)(min * Math.Pow(growth, levels - level - 1)); });
-            for (var i = 0; i < levels; i++)
-            {
-                result += nodesOnLevel(i);
-            }
-
-            return result;
+            return (int)(min * Math.Pow(growth, level));
         }
 
-        internal static int NodesOnLevel(int level, int levels, int descendants, int precendents)
-        {
-            var min = Math.Min(descendants, precendents);
-            var max = Math.Max(descendants, precendents);
-            var growth = max / min;
-            if (descendants > precendents)
-            {
-                return (int)(min * Math.Pow(growth, level));
-            }
+        return (int)(min * Math.Pow(growth, levels - level - 1));
+    }
 
-            return (int)(min * Math.Pow(growth, levels - level - 1));
+    private static void ValidateParameters(int descendantCount, int precedentCount)
+    {
+        var min = Math.Min(descendantCount, precedentCount);
+        var max = Math.Max(descendantCount, precedentCount);
+        if (max % min != 0)
+        {
+            throw new ArgumentException("One of the parameters have to be multiple of another one.");
+        }
+    }
+
+    private static QueueElement GetOrCreateNode(Dictionary<int, QueueElement> dictionary, int key)
+    {
+        ArgumentNullException.ThrowIfNull(dictionary);
+
+        if (dictionary.ContainsKey(key))
+        {
+            return dictionary[key];
         }
 
-        private static void ValidateParameters(int descendantCount, int precedentCount)
+        var node = new QueueElement(key, 0, 0);
+        dictionary.Add(key, node);
+        return node;
+    }
+
+    private class QueueElement
+    {
+        public QueueElement(int node, int descendantCount, int precedentCount)
         {
-            var min = Math.Min(descendantCount, precedentCount);
-            var max = Math.Max(descendantCount, precedentCount);
-            if (max % min != 0)
-            {
-                throw new ArgumentException("One of the parameters have to be multiple of another one.");
-            }
+            Edges = new List<int>();
+            Node = node;
+            DescendantCount = descendantCount;
+            PrecedentCount = precedentCount;
         }
 
-        private static QueueElement GetOrCreateNode(Dictionary<int, QueueElement> dictionary, int key)
-        {
-            ArgumentNullException.ThrowIfNull(dictionary);
-
-            if (dictionary.ContainsKey(key))
-            {
-                return dictionary[key];
-            }
-
-            var node = new QueueElement(key, 0, 0);
-            dictionary.Add(key, node);
-            return node;
-        }
-
-        private class QueueElement
-        {
-            public QueueElement(int node, int descendantCount, int precedentCount)
-            {
-                Edges = new List<int>();
-                Node = node;
-                DescendantCount = descendantCount;
-                PrecedentCount = precedentCount;
-            }
-
-            public int Node { get; set; }
-            public int DescendantCount { get; set; }
-            public int PrecedentCount { get; set; }
-            public IList<int> Edges { get; private set; }
-        }
+        public int Node { get; set; }
+        public int DescendantCount { get; set; }
+        public int PrecedentCount { get; set; }
+        public IList<int> Edges { get; private set; }
     }
 }
