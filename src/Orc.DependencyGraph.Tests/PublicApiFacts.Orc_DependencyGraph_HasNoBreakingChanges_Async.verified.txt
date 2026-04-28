@@ -149,3 +149,10 @@ namespace Orc.DependencyGraph
         public TopologicalSortException(string exceptionMessage) { }
     }
 }
+namespace Orc
+{
+    public static class OrcDependencyGraphModule
+    {
+        public static Microsoft.Extensions.DependencyInjection.IServiceCollection AddOrcDependencyGraph(this Microsoft.Extensions.DependencyInjection.IServiceCollection serviceCollection) { }
+    }
+}

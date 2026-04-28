@@ -1,37 +1,36 @@
-﻿namespace Orc.DependencyGraph
+﻿namespace Orc.DependencyGraph;
+
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
+
+internal class OrderedEnumerable<T> : IOrderedEnumerable<T>
 {
-    using System;
-    using System.Collections;
-    using System.Collections.Generic;
-    using System.Linq;
+    private readonly Func<IEnumerable<T>> _enumerator;
 
-    internal class OrderedEnumerable<T> : IOrderedEnumerable<T>
+    public OrderedEnumerable(Func<IEnumerable<T>> enumerator)
     {
-        private readonly Func<IEnumerable<T>> _enumerator;
+        ArgumentNullException.ThrowIfNull(enumerator);
 
-        public OrderedEnumerable(Func<IEnumerable<T>> enumerator)
-        {
-            ArgumentNullException.ThrowIfNull(enumerator);
+        _enumerator = enumerator;
+    }
 
-            _enumerator = enumerator;
-        }
+    public IOrderedEnumerable<T> CreateOrderedEnumerable<TKey>(Func<T, TKey> keySelector, IComparer<TKey>? comparer, bool @descending)
+    {
+        ArgumentNullException.ThrowIfNull(keySelector);
 
-        public IOrderedEnumerable<T> CreateOrderedEnumerable<TKey>(Func<T, TKey> keySelector, IComparer<TKey>? comparer, bool @descending)
-        {
-            ArgumentNullException.ThrowIfNull(keySelector);
+        throw new NotImplementedException();
+    }
 
-            throw new NotImplementedException();
-        }
+    public IEnumerator<T> GetEnumerator()
+    {
+        var enumeratorInstance = _enumerator();
+        return enumeratorInstance.GetEnumerator();
+    }
 
-        public IEnumerator<T> GetEnumerator()
-        {
-            var enumeratorInstance = _enumerator();
-            return enumeratorInstance.GetEnumerator();
-        }
-
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            return GetEnumerator();
-        }
+    IEnumerator IEnumerable.GetEnumerator()
+    {
+        return GetEnumerator();
     }
 }

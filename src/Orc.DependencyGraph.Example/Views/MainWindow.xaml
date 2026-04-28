@@ -5,7 +5,8 @@
               xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
               xmlns:catel="http://schemas.catelproject.com"
               xmlns:orccontrols="http://schemas.wildgums.com/orc/controls"
-              mc:Ignorable="d" d:DesignHeight="300" d:DesignWidth="400">
+              mc:Ignorable="d" d:DesignHeight="300" d:DesignWidth="400"
+              ShowInTaskbar="True">
 
     <orccontrols:StackGrid>
         <Grid.RowDefinitions>
