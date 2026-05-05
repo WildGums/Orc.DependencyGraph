@@ -1,7 +1,6 @@
 using System.Reflection;
 using Catel.Logging;
 using System;
-using System.Globalization;
 using Microsoft.Extensions.Logging;
 
 /// <summary>
